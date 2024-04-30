@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/styles.css">
+    <script type="module" src="src/app.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    
+    <h1 class="title">Fries calculator</h1>
+    <main>
+
+
+        <form>
+            <fieldset class="product-values">
+                <legend>Product</legend>
+                <div title="Theoretical usage in kg from inventory activity" class="form-group">
+                    <label  for="theoretical-usage-kg">Theoretical Usage KG</label>
+                    <input value="521.93" name="theoreticalUsage" type="text" id="theoretical-usage-kg">
+                </div>
+                <div title="Waste in KG from inventory activity" class="form-group">
+                    <label  for="friesWaste">Waste KG</label>
+                    <input value="15.00" name="waste" type="text" id="friesWaste">
+                </div>
+                <div title="Overportioning percentage" class="form-group">
+                    <label  for="overportionPercent">Overportion percentage</label>
+                    <input value="15.00" name="overportionPercent" type="text" id="overportionPercent">
+                </div>
+                <div title="Waste in KG from inventory activity" class="form-group">
+                    <label  for="friesWaste">Waste KG</label>
+                    <input value="15.00" name="waste" type="text" id="friesWaste">
+                </div>
+               
+            </fieldset>
+           
+            <fieldset class="packaging-amounts">
+                <legend>Amounts</legend>
+                <div title="Theoretical amount of used 11/11 fries bags" class="form-group">
+                    <label for="friesBag">Fries Bag</label>
+                    <input required value="3,137.00" name="friesBag" type="text" id="friesBag">
+                </div>
+                <div title="Actual amount of used fries clamshells" class="form-group">
+                    <label for="friesClamshellAmount">Fries Clamshell</label>
+                    <input required value="985.00" name="friesClamshell" type="text" id="friesClamshellAmount">
+                </div>
+                <div title="Theoretical amount of used snackboxes" class="form-group">
+                    <label for="snackboxAmount">Snackbox</label>
+                    <input required value="116.00" name="snackbox" type="text" id="snackboxAmount">
+                </div>
+                <div title="Theoretical amount of large fries scoops" class="form-group">
+                    <label for="friesScoopAmount">Fries Scoop</label>
+                    <input required value="133.00" name="friesScoop" type="text" id="friesScoopAmount">
+                </div>
+                <div title="Theoretical amount of used megaboxes" class="form-group">
+                    <label for="megaboxAmount">Megabox</label>
+                    <input required value="43.00" name="megabox" type="text" id="megaboxAmount">
+                </div>
+            </fieldset>
+           
+            <input type="submit" value="Process">
+        </form>
+
+
+
+        <div class="output">
+            <p class="title">Results</p>
+            <form>
+                <div title="Calculated actual total fries usage" class="output-group">
+                    <p class="output-heading">Actual Usage KG</p>
+                    <input disabled type="text">
+                </div>
+                <div title="Calculated actual fries usage from fries bags" class="output-group">
+                    <p class="output-heading">Fries Bag</p>
+                    <input disabled type="text">
+                </div>
+                <div title="Calculated actual fries usage from fries clamshells" class="output-group">
+                    <p class="output-heading">Fries Clamshell</p>
+                    <input disabled type="text">
+                </div>
+                <div title="Calculated actual fries usage from snackboxes" class="output-group">
+                    <p class="output-heading">Snackbox</p>
+                    <input disabled type="text">
+                </div>
+                <div title="Calculated actual fries usage from fries scoops" class="output-group">
+                    <p class="output-heading">Fries Scoop</p>
+                    <input disabled type="text">
+                </div>
+                <div title="Calculated actual fries usage from megaboxes" class="output-group">
+                    <p class="output-heading">Megabox</p>
+                    <input disabled type="text">
+                </div>
+            </form>
+        </div>
+
+    </main>
+    
+</body>
+</html>

@@ -1,0 +1,17 @@
+@import url("reset.css");
+@import url("main.css");
+@import url("output.css");
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+
+.title {
+    letter-spacing: 2px;
+    text-shadow: 5px 1px 3px rgba(0,0,0,0.1);
+}

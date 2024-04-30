@@ -1,0 +1,78 @@
+main {
+    padding: 2em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4em;
+}
+
+main > form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+    border: 1px solid black;
+    padding: 2em;
+    border-radius: 13px;
+    box-shadow: 3px 0 3px;
+}
+
+main fieldset {
+    padding: 1em;
+    border-radius: 13px;
+    border: none;
+    text-align: center;
+    box-shadow: 2px 0 3px 1px rgba(0, 0, 0, 0.3);
+    gap: 0.5em;
+}
+
+main > form .packaging-amounts {
+    display: flex;
+    flex-direction: column;
+}
+
+main fieldset legend {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+main > form .product-values {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+main > form .form-group {
+    flex: 0 0 35%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+
+main > form .form-group label {
+    font-weight: bold;
+}
+
+main > form .form-group input {
+    padding: 0.5em;
+    border-radius: 5px;
+    border: 1px solid black;
+    outline-color: blue;
+}
+
+main > form input[type="submit"] {
+    min-width: 50%;
+    padding: 0.5em;
+    border-radius: 7px;
+    outline: none;
+    cursor: pointer;
+}
+
+main > form input[type="submit"]:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    font-weight: bold;
+}

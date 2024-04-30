@@ -1,0 +1,42 @@
+main .output {
+    padding: 2em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+main .output .title {
+    text-align: center;
+    font-weight: bolder;
+    font-size: 1.8em;
+}
+
+main .output form {
+    display: flex;
+    flex-direction: column;
+    padding: 2em;
+    gap: 0.5em;
+    border: 1px solid black;
+    box-shadow: 3px 0 4px rgba(0, 0, 0, 0.3);
+    border-radius: 13px;
+}
+
+main .output form .output-group {
+    display: flex;
+    flex-direction: column;
+}
+
+main .output form .output-group {
+    display: flex;
+    flex-direction: column;
+}
+
+main .output form .output-group .output-heading{
+    font-weight: bold;
+}
+
+main .output form .output-group input{
+    padding: 0.5em;
+    border-radius: 5px;
+    border: 1px solid black;
+}
