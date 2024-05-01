@@ -60,6 +60,10 @@ form .packaging-amounts {
     align-items: center;
 }
 
+form .output-heading {
+    font-weight: bold;
+ }
+
 form .form-group {
     display: flex;
     flex-direction: column;
@@ -73,7 +77,6 @@ form .form-group label {
 form .form-group>.unit {
     position: relative;
 }
-
 
 form .form-group input {
     position: relative;
@@ -99,29 +102,15 @@ form .form-group>.unit:after {
     transform: translateY(-50%);
     z-index: 100;
     color: rgb(0, 195, 255);
+    cursor: pointer;
 }
 
-form .form-group>.unit.kg:after {
-    content: 'kg';
+form .form-group>.unit.unit-hover:after {
+    color: red;
 }
 
-form .form-group>.unit.percent:after {
-    content: '%';
+form .form-group>.unit:after {
+    content: attr(data-id);
+    font-weight: bold;
 }
 
-form .form-group>.unit.each:after {
-    content: 'EA';
-    font-size: 0.8em;
-}
-
-form .form-group>.unit.box:after {
-    content: 'box';
-}
-
-form .form-group>.unit.bag:after {
-    content: 'bag';
-}
-
-form .form-group>.unit.pound:after {
-    content: '£';
-}

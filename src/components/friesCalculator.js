@@ -16,7 +16,9 @@ export default class FriesCalculator {
     this.numberLimit = 6;
     this.form = document.querySelector(".input > form");
     this.resetButton = this.form.querySelector(".reset-container a");
-    this.select = this._select.bind(this);
+    this.hoverUnit = this._hoverUnit.bind(this);
+    this.endHoverUnit= this._endHoverUnit.bind(this);
+    this.clickHandler = this._clickHandler.bind(this);
     this.resetHandler = this._resetHandler.bind(this);
     this.inputHandler = this._inputHandler.bind(this);
     this.checkEmpty = this._checkEmpty.bind(this);
@@ -26,11 +28,25 @@ export default class FriesCalculator {
   init() {
     this.form.addEventListener("input", this.inputHandler);
     this.resetButton.addEventListener("click", this.resetHandler);
-    document.addEventListener("click", this.select);
+    document.querySelector('form').addEventListener('mouseover', this.hoverUnit);
+    document.addEventListener("click", this.clickHandler);
     const formElements = this.eventUtil.inputObject(this.form);
     Object.keys(formElements).forEach((filedName) =>
       formElements[filedName].addEventListener("blur", this.checkEmpty)
     );
+  }
+
+  _hoverUnit(e) {
+    const element = e.target;
+    if (element.matches('.unit')) {
+      element.classList.add('unit-hover');
+      element.addEventListener('mouseout', this.endHoverUnit)
+    }
+  }
+
+  _endHoverUnit(e) {
+    e.target.classList.remove('unit-hover');
+    e.target.removeEventListener('mouseout', this.endHoverUnit);
   }
 
   _checkEmpty(e) {
@@ -44,9 +60,16 @@ export default class FriesCalculator {
     this.evenBus.emit("resetForm");
   }
 
-  _select(e) {
+  _clickHandler(e) {
     if (e.target.matches('input[type="text"]')) {
       e.target.select();
+    }else if (e.target.matches('.unit')) {
+      const data = e.target.dataset.id;
+      const unitToggles = {
+        kg: 'gr',
+        gr: 'kg',
+      }
+      e.target.dataset.id = unitToggles[data];
     }
   }
 
