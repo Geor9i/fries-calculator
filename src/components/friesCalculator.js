@@ -14,30 +14,39 @@ export default class FriesCalculator {
     this.resipePortion = RECIPE_PORTIONS_KG;
     this.cookedPortion = COOKED_PORTIONS_KG;
     this.form = document.querySelector(".input > form");
-    this.resetButton = this.form.querySelector('.reset-container a');
+    this.resetButton = this.form.querySelector(".reset-container a");
     this.select = this._select.bind(this);
     this.resetHandler = this._resetHandler.bind(this);
     this.inputHandler = this._inputHandler.bind(this);
+    this.checkEmpty = this._checkEmpty.bind(this);
     this.init();
   }
 
   init() {
     this.form.addEventListener("input", this.inputHandler);
-    this.resetButton.addEventListener('click', this.resetHandler);
-    document.addEventListener('click', this.select);
+    this.resetButton.addEventListener("click", this.resetHandler);
+    document.addEventListener("click", this.select);
+    const formElements = this.eventUtil.inputObject(this.form);
+    Object.keys(formElements).forEach(filedName => formElements[filedName].addEventListener('blur', this.checkEmpty));
+  }
+
+  _checkEmpty(e) {
+    console.log(e.currentTarget.value);
+    if (e.currentTarget.value === '') {
+        e.target.value = 0;
+    }
   }
 
   _resetHandler() {
-        this.eventUtil.resetForm(this.form, 0);
-        this.evenBus.emit('resetForm');
+    this.eventUtil.resetForm(this.form, 0);
+    this.evenBus.emit("resetForm");
   }
 
   _select(e) {
     if (e.target.matches('input[type="text"]')) {
-        e.target.select();
+      e.target.select();
     }
   }
-
 
   _inputHandler(e) {
     e.preventDefault();
@@ -53,7 +62,7 @@ export default class FriesCalculator {
     Object.keys(formObj).forEach(
       (key) =>
         (formObj[key].value = this.util.filterString(formObj[key].value, [
-          { symbol: "\\d" },
+          { symbol: "\\d", matchLimit: 5 },
           { symbol: "\\,", matchLimit: 1 },
           { symbol: "\\.", matchLimit: 1 },
         ]))

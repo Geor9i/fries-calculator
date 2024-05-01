@@ -1,10 +1,6 @@
 export default class Util {
   constructor() {}
 
-  formatNumber(stringValue) {
-    const pattern = /[^\d.]+/g;
-    return Number(stringValue.replace(pattern, ""));
-  }
 
   /**
    *
@@ -30,10 +26,8 @@ export default class Util {
         let { symbol, matchLimit, remove } = regexSymbols[s];
         let pattern = "";
         const prefix = remove ? "^" : "";
-        if (matchLimit === undefined) {
+        if (matchLimit === undefined || matchLimit > 0) {
           pattern = new RegExp(`[${prefix}${symbol}]`, "g");
-        } else if (matchLimit > 0) {
-          pattern = new RegExp(`[${prefix}${symbol}]{${matchLimit}}`, "g");
         } else {
           continue;
         }
