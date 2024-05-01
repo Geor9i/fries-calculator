@@ -13,8 +13,7 @@ main>.output {
     gap: 1em;
 }
 
-main>.input .title,
-main>.output .title {
+.title {
     text-align: center;
     font-weight: bold;
     font-size: 2em;

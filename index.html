@@ -167,8 +167,35 @@
                 </fieldset>
             </form>
         </div>
-
     </main>
+
+    <div class="options-button-container">
+        <svg class="options-button">
+            <use xlink:href="./svg/sprite.svg#arrow_down"></use>
+        </svg>
+    </div>
+
+    
+    <section id="options" class="options">
+        <p class="title">Results</p>
+        <form>
+            <fieldset class="product-values">
+                <legend>Theoretical Usage</legend>
+                <div title="Calculated actual total fries usage in KG" class="form-group">
+                    <p class="output-heading">Box</p>
+                    <div class="unit box">
+                        <input name="theoreticalBox" disabled type="text">
+                    </div>
+                </div>
+                <div title="Calculated actual total fries usage in KG" class="form-group">
+                    <p class="output-heading">Inner</p>
+                    <div class="unit bag">
+                        <input name="theoreticalBag" disabled type="text">
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </section>
 
 </body>
 
