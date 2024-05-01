@@ -38,5 +38,6 @@ main .output form .output-group .output-heading{
 main .output form .output-group input{
     padding: 0.5em;
     border-radius: 5px;
-    border: 1px solid black;
+    border: none;
+    box-shadow: inset 0 0 5px 2px rgba(255, 251, 3, 0.2), 0 0 2px rgb(0, 0, 0, 0.7);
 }
