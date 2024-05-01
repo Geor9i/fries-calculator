@@ -1,7 +1,6 @@
 export default class Util {
   constructor() {}
 
-
   /**
    *
    * @param {String} string The string to be filtered
@@ -47,5 +46,21 @@ export default class Util {
     return stringSpread
       .map(({ char, matched: match }) => (match ? char : ""))
       .join("");
+  }
+
+  trimValue(string, trimValues = []) {
+    trimValues.forEach((entry) => {
+      const { value, start, end, remainAmount } = entry;
+      let remain = remainAmount ? remainAmount : 0;
+      if (start !== false && string.startsWith(value)) {
+        const pattern = new RegExp(`^${value}+`);
+        string = string.replace(pattern, value.repeat(remain));
+      }
+      if (end !== false && string.endsWith(value)) {
+        const pattern = new RegExp(`${value}+$`);
+        string = string.replace(pattern, value.repeat(remain));
+      }
+    });
+    return string;
   }
 }

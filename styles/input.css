@@ -6,7 +6,7 @@
 
 .input .reset-container a {
     position: relative;
-    padding: 0.5em 1em;
+    padding: 0.2em 0.5em;
     border-radius: 7px;
     color: var(--form-blue);
     text-shadow: 2px 2px 1px rgb(255, 255, 255);

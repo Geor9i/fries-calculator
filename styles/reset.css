@@ -1,16 +1,27 @@
 * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
-input, img {
-    display: block;
-    width: 100%;
-    height: auto;
+input,
+img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 a {
-    cursor: pointer;
-    text-decoration: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+::-moz-selection {
+    color: rgb(0, 0, 0);
+    background: rgb(255, 255, 255, 0.2);
+}
+
+::selection {
+  color: rgb(0, 0, 0);
+  background: rgb(20, 220, 255, 0.2);
 }

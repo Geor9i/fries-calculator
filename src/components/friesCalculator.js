@@ -13,6 +13,7 @@ export default class FriesCalculator {
     this.portionEgdeCases = PORTION_EGDE_CASES;
     this.resipePortion = RECIPE_PORTIONS_KG;
     this.cookedPortion = COOKED_PORTIONS_KG;
+    this.numberLimit = 5;
     this.form = document.querySelector(".input > form");
     this.resetButton = this.form.querySelector(".reset-container a");
     this.select = this._select.bind(this);
@@ -27,13 +28,14 @@ export default class FriesCalculator {
     this.resetButton.addEventListener("click", this.resetHandler);
     document.addEventListener("click", this.select);
     const formElements = this.eventUtil.inputObject(this.form);
-    Object.keys(formElements).forEach(filedName => formElements[filedName].addEventListener('blur', this.checkEmpty));
+    Object.keys(formElements).forEach((filedName) =>
+      formElements[filedName].addEventListener("blur", this.checkEmpty)
+    );
   }
 
   _checkEmpty(e) {
-    console.log(e.currentTarget.value);
-    if (e.currentTarget.value === '') {
-        e.target.value = 0;
+    if (e.currentTarget.value === "") {
+      e.target.value = 0;
     }
   }
 
@@ -59,14 +61,17 @@ export default class FriesCalculator {
 
   sanitizeInput(form) {
     const formObj = this.eventUtil.inputObject(form);
-    Object.keys(formObj).forEach(
-      (key) =>
-        (formObj[key].value = this.util.filterString(formObj[key].value, [
-          { symbol: "\\d", matchLimit: 5 },
-          { symbol: "\\,", matchLimit: 1 },
-          { symbol: "\\.", matchLimit: 1 },
-        ]))
-    );
+    Object.keys(formObj).forEach((key) => {
+      const inputField = formObj[key];
+      const filteredString = this.util.filterString(inputField.value, [
+        { symbol: "\\d", matchLimit: this.numberLimit },
+        { symbol: "\\,", matchLimit: 1 },
+        { symbol: "\\.", matchLimit: 1 },
+      ]);
+      inputField.value = this.util.trimValue(filteredString, [
+        { value: "0", end: false, remainAmount: 1 },
+      ]);
+    });
   }
 
   calculate(formData) {
@@ -82,7 +87,6 @@ export default class FriesCalculator {
   }
 
   forecastActualUsage(formData) {
-    console.log(formData);
     const { waste, overportionPercent, unaccounted } = formData;
     const { friesBag, friesClamshell, megabox, snackbox, friesScoop } =
       formData;
