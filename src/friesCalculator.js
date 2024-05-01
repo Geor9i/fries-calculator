@@ -1,5 +1,5 @@
 import UtilInjector from "./utils.js/utilInjector.js";
-import { PORTION_EGDE_CASES, FRIES_PORTIONS_KG } from "./constants.js";
+import { PORTION_EGDE_CASES, RECIPE_PORTIONS_KG, COOKED_PORTIONS_KG } from "./constants.js";
 
 export default class FriesCalculator {
     constructor() {
@@ -7,7 +7,8 @@ export default class FriesCalculator {
         this.evenBus = UtilInjector.eventBus;
         this.util = UtilInjector.util;
         this.portionEgdeCases = PORTION_EGDE_CASES;
-        this.portionSizes = FRIES_PORTIONS_KG;
+        this.resipePortion = RECIPE_PORTIONS_KG;
+        this.cookedPortion = COOKED_PORTIONS_KG;
         this.form = document.querySelector('main > form');
         this.submitHandler = this._submitHandler.bind(this);
         this.init();
@@ -21,35 +22,46 @@ export default class FriesCalculator {
         e.preventDefault();
         const form = e.currentTarget;
         const formData = this.eventUtil.getFormData(form);
-        let result = this.calculateActual(formData);
+        let result = this.calculate(formData);
+        this.evenBus.emit('calculatorData', result)
     }
 
-    calculateActual(formData) {
+    calculate(formData) {
         let data = { ...formData };
         data.friesBag = Math.max(0, data.friesBag - data.friesClamshell - data.snackbox);
         data.friesScoop = Math.max(0, data.friesScoop - data.megabox);
         const portionShares = this.getPortionShares(data);
-        // console.log(portionShares);
-        let portionMax = Object.keys(data).reduce((obj, key) => {
-            if (key === 'theoreticalUsage') return obj;
+        const actualUsage = this.forecastActualUsage(data);
+        return actualUsage;
+    }
 
-            obj[key] = data[key] * this.portionEgdeCases[key]?.max;
-            return obj;
-        }, {})
-        let totalMax = Object.keys(portionMax).reduce((acc, key) => acc += portionMax[key],0)
-        console.log(totalMax);
+    forecastActualUsage(formData) {
+        console.log(formData);
+        const { waste, overportionPercent, unaccounted } = formData;
+        const { friesBag, friesClamshell, megabox, snackbox, friesScoop } = formData;
+        const rgPackaging = { friesBag, friesClamshell, snackbox} ;
+        const lgPackaging = { megabox, friesScoop };
+        const adjust = (packagingName, packagingAmount, portionSize = 'rg') => {
+            const { min, max } = this.portionEgdeCases[packagingName];
+            const portionIncrease = overportionPercent / 100;
+            const portion = Math.max(min, Math.min(max, this.resipePortion[portionSize] * (portionIncrease + 1)));
+            return packagingAmount * portion;
+        }
+        let totalRg = Object.keys(rgPackaging).reduce((acc, key) => acc += adjust(key, rgPackaging[key]), 0);
+        let totalLg = Object.keys(lgPackaging).reduce((acc, key) => acc += adjust(key, lgPackaging[key], 'lg'), 0);
+        return totalRg + totalLg + waste + unaccounted;
     }
 
     getPortionShares(formData) {
         const { friesBag, friesClamshell, megabox, snackbox, friesScoop, theoreticalUsage } = formData;
-        const totalFriesRG = [friesBag, friesClamshell, snackbox].reduce((acc, curr) => acc += (curr * this.portionSizes.rg), 0);
-        const totalFriesLG = [friesScoop, megabox].reduce((acc, curr) => acc += (curr * this.portionSizes.lg), 0);
+        const totalFriesRG = [friesBag, friesClamshell, snackbox].reduce((acc, curr) => acc += (curr * this.resipePortion.rg), 0);
+        const totalFriesLG = [friesScoop, megabox].reduce((acc, curr) => acc += (curr * this.resipePortion.lg), 0);
         const totalFriesSoldKG = totalFriesLG + totalFriesRG;
 
         const getShares = (packageQuantity, sizeShareKG = totalFriesRG, size = 'rg') => {
             let shareSizeName = size === 'rg' ? 'shareRg': 'shareLg';
-            let share = (packageQuantity * this.portionSizes[size]) / sizeShareKG;
-            let shareSize = (packageQuantity * this.portionSizes[size]) / totalFriesSoldKG;
+            let share = (packageQuantity * this.resipePortion[size]) / sizeShareKG;
+            let shareSize = (packageQuantity * this.resipePortion[size]) / totalFriesSoldKG;
             let shareSizeKG = shareSize * sizeShareKG;
             return {
                 share,

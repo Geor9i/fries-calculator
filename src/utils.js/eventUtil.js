@@ -35,4 +35,11 @@ export default class EventUtil {
     Object.keys(formData).forEach(key => formData[key] = this.util.formatNumber(formData[key]));
     return formData;
   }
+
+  inputObject(element) {
+    return Array.from(element.querySelectorAll('input')).reduce((obj, child) => {
+      obj[child.name] = child;
+      return obj;
+    }, {})
+  }
 }

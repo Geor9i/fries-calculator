@@ -8,6 +8,7 @@ main {
 }
 
 main > form {
+    width: 30vw;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -20,6 +21,7 @@ main > form {
 }
 
 main fieldset {
+    width: 80%;
     padding: 1em;
     border-radius: 13px;
     border: none;
@@ -31,16 +33,17 @@ main fieldset {
 main > form .packaging-amounts {
     display: flex;
     flex-direction: column;
-}
-
-main fieldset legend {
-    font-size: 1.5em;
-    font-weight: bold;
+    align-items: center;
 }
 
 main > form .product-values {
     display: grid;
     grid-template-columns: 1fr 1fr;
+}
+
+main fieldset legend {
+    font-size: 1.5em;
+    font-weight: bold;
 }
 
 main > form .form-group {
@@ -57,10 +60,32 @@ main > form .form-group label {
 }
 
 main > form .form-group input {
+    position: relative;
     padding: 0.5em;
     border-radius: 5px;
     border: 1px solid black;
     outline-color: blue;
+}
+
+
+main > form .form-group > .unit {
+    position: relative;
+}
+
+
+main > form .form-group > .unit:after {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    color: blue;
+}
+main > form .form-group > .unit.kg:after {
+    content: 'kg';
+}
+main > form .form-group > .unit.percent:after {
+    content: '%';
 }
 
 main > form input[type="submit"] {

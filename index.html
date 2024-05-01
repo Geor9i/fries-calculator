@@ -17,20 +17,28 @@
             <fieldset class="product-values">
                 <legend>Product</legend>
                 <div title="Theoretical usage in kg from inventory activity" class="form-group">
-                    <label  for="theoretical-usage-kg">Theoretical Usage KG</label>
-                    <input value="521.93" name="theoreticalUsage" type="text" id="theoretical-usage-kg">
+                    <label  for="theoretical-usage-kg">Theoretical Usage</label>
+                    <div class="unit kg">
+                        <input value="521.93" name="theoreticalUsage" type="text" id="theoretical-usage-kg">
+                    </div>
                 </div>
-                <div title="Waste in KG from inventory activity" class="form-group">
-                    <label  for="friesWaste">Waste KG</label>
-                    <input value="15.00" name="waste" type="text" id="friesWaste">
+                <div title="Wasted fries in KG from inventory activity" class="form-group">
+                    <label  for="friesWaste">Waste</label>
+                    <div class="unit kg">
+                        <input value="37" name="waste" type="text" id="friesWaste">
+                    </div>
                 </div>
                 <div title="Overportioning percentage" class="form-group">
                     <label  for="overportionPercent">Overportion percentage</label>
-                    <input value="15.00" name="overportionPercent" type="text" id="overportionPercent">
+                    <div class="unit percent">
+                        <input max="100" min="0" value="80" name="overportionPercent" type="text" id="overportionPercent">
+                    </div>
                 </div>
-                <div title="Waste in KG from inventory activity" class="form-group">
-                    <label  for="friesWaste">Waste KG</label>
-                    <input value="15.00" name="waste" type="text" id="friesWaste">
+                <div title="Unnacounted fries in KG" class="form-group">
+                    <label  for="unacountedFries">Unaccounted</label>
+                    <div class="unit kg">
+                        <input value="15.00" name="unaccounted" type="text" id="unacountedFries">
+                    </div>
                 </div>
                
             </fieldset>
@@ -69,27 +77,27 @@
             <form>
                 <div title="Calculated actual total fries usage" class="output-group">
                     <p class="output-heading">Actual Usage KG</p>
-                    <input disabled type="text">
+                    <input name="actualUsage" disabled type="text">
                 </div>
                 <div title="Calculated actual fries usage from fries bags" class="output-group">
                     <p class="output-heading">Fries Bag</p>
-                    <input disabled type="text">
+                    <input name="friesBags" disabled type="text">
                 </div>
                 <div title="Calculated actual fries usage from fries clamshells" class="output-group">
                     <p class="output-heading">Fries Clamshell</p>
-                    <input disabled type="text">
+                    <input name="friesClamshell" disabled type="text">
                 </div>
                 <div title="Calculated actual fries usage from snackboxes" class="output-group">
                     <p class="output-heading">Snackbox</p>
-                    <input disabled type="text">
+                    <input name="snackbox" disabled type="text">
                 </div>
                 <div title="Calculated actual fries usage from fries scoops" class="output-group">
                     <p class="output-heading">Fries Scoop</p>
-                    <input disabled type="text">
+                    <input name="friesScoop" disabled type="text">
                 </div>
                 <div title="Calculated actual fries usage from megaboxes" class="output-group">
                     <p class="output-heading">Megabox</p>
-                    <input disabled type="text">
+                    <input name="megabox" disabled type="text">
                 </div>
             </form>
         </div>
