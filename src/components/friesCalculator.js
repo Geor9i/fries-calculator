@@ -9,11 +9,11 @@ export default class FriesCalculator {
   constructor() {
     this.eventUtil = UtilInjector.event;
     this.evenBus = UtilInjector.eventBus;
-    this.util = UtilInjector.util;
+    this.stringUtil = UtilInjector.string;
     this.portionEgdeCases = PORTION_EGDE_CASES;
     this.resipePortion = RECIPE_PORTIONS_KG;
     this.cookedPortion = COOKED_PORTIONS_KG;
-    this.numberLimit = 5;
+    this.numberLimit = 6;
     this.form = document.querySelector(".input > form");
     this.resetButton = this.form.querySelector(".reset-container a");
     this.select = this._select.bind(this);
@@ -63,12 +63,13 @@ export default class FriesCalculator {
     const formObj = this.eventUtil.inputObject(form);
     Object.keys(formObj).forEach((key) => {
       const inputField = formObj[key];
-      const filteredString = this.util.filterString(inputField.value, [
+      let filteredString = this.stringUtil.filterString(inputField.value, [
         { symbol: "\\d", matchLimit: this.numberLimit },
-        { symbol: "\\,", matchLimit: 1 },
+        { symbol: "\\," },
         { symbol: "\\.", matchLimit: 1 },
       ]);
-      inputField.value = this.util.trimValue(filteredString, [
+      filteredString = this.stringUtil.patternSplice(filteredString, [{pattern: /\,{2,}/, replace: ','}]);
+      inputField.value = this.stringUtil.trimValue(filteredString, [
         { value: "0", end: false, remainAmount: 1 },
       ]);
     });

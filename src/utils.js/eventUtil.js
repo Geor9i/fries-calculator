@@ -1,4 +1,4 @@
-import Util from "./util.js";
+import Util from "./stringUtil.js";
 
 export default class EventUtil {
 

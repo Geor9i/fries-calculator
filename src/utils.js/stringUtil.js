@@ -1,4 +1,4 @@
-export default class Util {
+export default class StringUtil {
   constructor() {}
 
   /**
@@ -60,6 +60,15 @@ export default class Util {
         const pattern = new RegExp(`${value}+$`);
         string = string.replace(pattern, value.repeat(remain));
       }
+    });
+    return string;
+  }
+
+  patternSplice(string, patterns = []) {
+    patterns.forEach((entry) => {
+      const { pattern, replace } = entry;
+      const replacevalue = replace ? replace : '';
+      string = string.replace(pattern, replacevalue);
     });
     return string;
   }
