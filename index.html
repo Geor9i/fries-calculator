@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,102 +8,168 @@
     <script type="module" src="src/app.js"></script>
     <title>Document</title>
 </head>
+
 <body>
-    
+
     <h1 class="title">Fries calculator</h1>
     <main>
 
+        <div class="input">
+            <p class="title">Input</p>
+            <form>
+                <div class="reset-container">
+                    <a title="Reset">Reset</a>
+                </div>
+                <fieldset class="product-values">
+                    <legend>Product</legend>
+                    <div title="Theoretical usage in kg from inventory activity" class="form-group">
+                        <label for="theoretical-usage-kg">Theoretical Usage</label>
+                        <div class="unit kg">
+                            <input value="521.93" name="theoreticalUsage" type="text" id="theoretical-usage-kg">
+                        </div>
+                    </div>
+                    <div title="Wasted fries in KG from inventory activity" class="form-group">
+                        <label for="friesWaste">Waste</label>
+                        <div class="unit kg">
+                            <input value="37" name="waste" type="text" id="friesWaste">
+                        </div>
+                    </div>
+                    <div title="Overportioning as a percentage" class="form-group">
+                        <label for="overportionPercent">Overportioning</label>
+                        <div class="unit percent">
+                            <input max="100" min="0" value="80" name="overportionPercent" type="text"
+                                id="overportionPercent">
+                        </div>
+                    </div>
+                    <div title="Unnacounted fries in KG" class="form-group">
+                        <label for="unacountedFries">Unaccounted</label>
+                        <div class="unit kg">
+                            <input value="15.00" name="unaccounted" type="text" id="unacountedFries">
+                        </div>
+                    </div>
 
-        <form>
-            <fieldset class="product-values">
-                <legend>Product</legend>
-                <div title="Theoretical usage in kg from inventory activity" class="form-group">
-                    <label  for="theoretical-usage-kg">Theoretical Usage</label>
-                    <div class="unit kg">
-                        <input value="521.93" name="theoreticalUsage" type="text" id="theoretical-usage-kg">
-                    </div>
-                </div>
-                <div title="Wasted fries in KG from inventory activity" class="form-group">
-                    <label  for="friesWaste">Waste</label>
-                    <div class="unit kg">
-                        <input value="37" name="waste" type="text" id="friesWaste">
-                    </div>
-                </div>
-                <div title="Overportioning percentage" class="form-group">
-                    <label  for="overportionPercent">Overportion percentage</label>
-                    <div class="unit percent">
-                        <input max="100" min="0" value="80" name="overportionPercent" type="text" id="overportionPercent">
-                    </div>
-                </div>
-                <div title="Unnacounted fries in KG" class="form-group">
-                    <label  for="unacountedFries">Unaccounted</label>
-                    <div class="unit kg">
-                        <input value="15.00" name="unaccounted" type="text" id="unacountedFries">
-                    </div>
-                </div>
-               
-            </fieldset>
-           
-            <fieldset class="packaging-amounts">
-                <legend>Amounts</legend>
-                <div title="Theoretical amount of used 11/11 fries bags" class="form-group">
-                    <label for="friesBag">Fries Bag</label>
-                    <input required value="3,137.00" name="friesBag" type="text" id="friesBag">
-                </div>
-                <div title="Actual amount of used fries clamshells" class="form-group">
-                    <label for="friesClamshellAmount">Fries Clamshell</label>
-                    <input required value="985.00" name="friesClamshell" type="text" id="friesClamshellAmount">
-                </div>
-                <div title="Theoretical amount of used snackboxes" class="form-group">
-                    <label for="snackboxAmount">Snackbox</label>
-                    <input required value="116.00" name="snackbox" type="text" id="snackboxAmount">
-                </div>
-                <div title="Theoretical amount of large fries scoops" class="form-group">
-                    <label for="friesScoopAmount">Fries Scoop</label>
-                    <input required value="133.00" name="friesScoop" type="text" id="friesScoopAmount">
-                </div>
-                <div title="Theoretical amount of used megaboxes" class="form-group">
-                    <label for="megaboxAmount">Megabox</label>
-                    <input required value="43.00" name="megabox" type="text" id="megaboxAmount">
-                </div>
-            </fieldset>
-           
-            <input type="submit" value="Process">
-        </form>
+                </fieldset>
 
+                <fieldset class="packaging-amounts">
+                    <legend>Amounts</legend>
+                    <div title="Theoretical amount of used 11/11 fries bags" class="form-group">
+                        <label for="friesBag">Fries Bag</label>
+                        <div class="unit each">
+                            <input required value="3,137.00" name="friesBag" type="text" id="friesBag">
+                        </div>
+                    </div>
+                    <div title="Actual amount of used fries clamshells" class="form-group">
+                        <label for="friesClamshellAmount">Fries Clamshell</label>
+                        <div class="unit each">
+                            <input required value="985.00" name="friesClamshell" type="text" id="friesClamshellAmount">
+                        </div>
+                    </div>
+                    <div title="Theoretical amount of used snackboxes" class="form-group">
+                        <label for="snackboxAmount">Snackbox</label>
+                        <div class="unit each">
+                            <input required value="116.00" name="snackbox" type="text" id="snackboxAmount">
+                        </div>
+                    </div>
+                    <div title="Theoretical amount of large fries scoops" class="form-group">
+                        <label for="friesScoopAmount">Fries Scoop</label>
+                        <div class="unit each">
+                            <input required value="133.00" name="friesScoop" type="text" id="friesScoopAmount">
+                        </div>
+                    </div>
+                    <div title="Theoretical amount of used megaboxes" class="form-group">
+                        <label for="megaboxAmount">Megabox</label>
+                        <div class="unit each">
+                            <input required value="43.00" name="megabox" type="text" id="megaboxAmount">
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
 
 
         <div class="output">
             <p class="title">Results</p>
             <form>
-                <div title="Calculated actual total fries usage" class="output-group">
-                    <p class="output-heading">Actual Usage KG</p>
-                    <input name="actualUsage" disabled type="text">
-                </div>
-                <div title="Calculated actual fries usage from fries bags" class="output-group">
-                    <p class="output-heading">Fries Bag</p>
-                    <input name="friesBags" disabled type="text">
-                </div>
-                <div title="Calculated actual fries usage from fries clamshells" class="output-group">
-                    <p class="output-heading">Fries Clamshell</p>
-                    <input name="friesClamshell" disabled type="text">
-                </div>
-                <div title="Calculated actual fries usage from snackboxes" class="output-group">
-                    <p class="output-heading">Snackbox</p>
-                    <input name="snackbox" disabled type="text">
-                </div>
-                <div title="Calculated actual fries usage from fries scoops" class="output-group">
-                    <p class="output-heading">Fries Scoop</p>
-                    <input name="friesScoop" disabled type="text">
-                </div>
-                <div title="Calculated actual fries usage from megaboxes" class="output-group">
-                    <p class="output-heading">Megabox</p>
-                    <input name="megabox" disabled type="text">
-                </div>
+                <fieldset class="product-values">
+                    <legend>Actual Usage</legend>
+                    <div title="Calculated actual total fries usage in KG" class="form-group">
+                        <p class="output-heading">Frozen Fries</p>
+                        <div class="unit kg">
+                            <input name="actualUsage" disabled type="text">
+                        </div>
+                    </div>
+                    <div title="Calculated actual total fries usage in KG" class="form-group">
+                        <p class="output-heading">Value Over</p>
+                        <div class="unit pound">
+                            <input name="price" disabled type="text">
+                        </div>
+                    </div>
+                    <div title="Calculated actual total fries usage in KG" class="form-group">
+                        <p class="output-heading">Total Box</p>
+                        <div class="unit box">
+                            <input name="actualBox" disabled type="text">
+                        </div>
+                    </div>
+                    <div title="Calculated actual total fries usage in KG" class="form-group">
+                        <p class="output-heading">Total Bags</p>
+                        <div class="unit bag">
+                            <input name="actualBag" disabled type="text">
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="product-values">
+                    <legend>Theoretical Usage</legend>
+                    <div title="Calculated actual total fries usage in KG" class="form-group">
+                        <p class="output-heading">Box</p>
+                        <div class="unit box">
+                            <input name="theoreticalBox" disabled type="text">
+                        </div>
+                    </div>
+                    <div title="Calculated actual total fries usage in KG" class="form-group">
+                        <p class="output-heading">Inner</p>
+                        <div class="unit bag">
+                            <input name="theoreticalBag" disabled type="text">
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="packaging-amounts">
+                    <legend>Portions</legend>
+                    <div title="Calculated actual fries usage from fries bags" class="form-group">
+                        <p class="output-heading">Fries Bag</p>
+                        <div class="unit each">
+                            <input name="friesBags" disabled type="text">
+                        </div>
+                    </div>
+                    <div title="Calculated actual fries usage from fries clamshells" class="form-group">
+                        <p class="output-heading">Fries Clamshell</p>
+                        <div class="unit each">
+                            <input name="friesClamshell" disabled type="text">
+                        </div>
+                    </div>
+                    <div title="Calculated actual fries usage from snackboxes" class="form-group">
+                        <p class="output-heading">Snackbox</p>
+                        <div class="unit each">
+                            <input name="snackbox" disabled type="text">
+                        </div>
+                    </div>
+                    <div title="Calculated actual fries usage from fries scoops" class="form-group">
+                        <p class="output-heading">Fries Scoop</p>
+                        <div class="unit each">
+                            <input name="friesScoop" disabled type="text">
+                        </div>
+                    </div>
+                    <div title="Calculated actual fries usage from megaboxes" class="form-group">
+                        <p class="output-heading">Megabox</p>
+                        <div class="unit each">
+                            <input name="megabox" disabled type="text">
+                        </div>
+                    </div>
+                </fieldset>
             </form>
         </div>
 
     </main>
-    
+
 </body>
+
 </html>

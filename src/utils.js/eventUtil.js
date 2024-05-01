@@ -32,7 +32,7 @@ export default class EventUtil {
       formObj[name] = value;
       return formObj;
     }, {});
-    Object.keys(formData).forEach(key => formData[key] = this.util.formatNumber(formData[key]));
+    Object.keys(formData).forEach(key => formData[key] = Number(this.util.filterString(formData[key], [{symbol: '\\d'}, {symbol: '\\.'}])));
     return formData;
   }
 
@@ -41,5 +41,11 @@ export default class EventUtil {
       obj[child.name] = child;
       return obj;
     }, {})
+  }
+
+  
+  resetForm(formElement, resetValue = '') {
+    const formObj = this.inputObject(formElement);
+    Object.keys(formObj).forEach(fieldName => formObj[fieldName].value = resetValue);
   }
 }

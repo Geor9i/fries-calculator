@@ -8,10 +8,15 @@ export const PORTION_EGDE_CASES = {
 
 export const RECIPE_PORTIONS_KG = {
     rg: 0.157,
-    lg: 0.22 
+    lg: 0.22,
 }
 
 export const COOKED_PORTIONS_KG = {
     rg: 0.118,
     lg: 0.134 
+}
+
+export const PROPORTIONS_KG = {
+    box: 15,
+    bag: 1.5,
 }

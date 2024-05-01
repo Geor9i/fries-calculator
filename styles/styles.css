@@ -1,6 +1,11 @@
 @import url("reset.css");
 @import url("main.css");
+@import url("input.css");
 @import url("output.css");
+
+:root {
+    --form-blue: rgb(0, 225, 255);
+}
 
 body {
     display: flex;
@@ -11,7 +16,9 @@ body {
 }
 
 
-.title {
+body > .title {
+    font-size: 2.5em;
+    font-weight: bold;
     letter-spacing: 2px;
     text-shadow: 5px 1px 3px rgba(0,0,0,0.1);
 }

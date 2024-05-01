@@ -3,3 +3,16 @@
     margin: 0;
     box-sizing: border-box;
 }
+
+input, img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+input
+
+a {
+    cursor: pointer;
+    text-decoration: none;
+}
