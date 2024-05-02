@@ -1,9 +1,9 @@
-import Util from "./stringUtil.js";
+import DependencyHub from "../dependencyResolvers/dependencyHub.js";
 
 export default class EventUtil {
+  // static dependencies = ['StringUtil'];
 
-  constructor() {
-    this.util = new Util();
+  constructor () {
     this.maxParentCounter = 10;
   }
 
@@ -32,7 +32,7 @@ export default class EventUtil {
       formObj[name] = value;
       return formObj;
     }, {});
-    Object.keys(formData).forEach(key => formData[key] = Number(this.util.filterString(formData[key], [{symbol: '\\d'}, {symbol: '\\.'}])));
+    Object.keys(formData).forEach(key => formData[key] = Number(this.stringUtil.filterString(formData[key], [{symbol: '\\d'}, {symbol: '\\.'}])));
     return formData;
   }
 
@@ -49,3 +49,6 @@ export default class EventUtil {
     Object.keys(formObj).forEach(fieldName => formObj[fieldName].value = resetValue);
   }
 }
+
+// DependencyHub.add(EventUtil);
+console.log(EventUtil.prototype);

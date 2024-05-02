@@ -3,6 +3,7 @@ import {
   PORTION_EGDE_CASES,
   RECIPE_PORTIONS_KG,
   COOKED_PORTIONS_KG,
+  UNIT_TOGGLES
 } from "../constants.js";
 
 export default class FriesCalculator {
@@ -10,14 +11,16 @@ export default class FriesCalculator {
     this.eventUtil = UtilInjector.event;
     this.evenBus = UtilInjector.eventBus;
     this.stringUtil = UtilInjector.string;
+    console.log(this.stringUtil.sanitizeInput);
     this.portionEgdeCases = PORTION_EGDE_CASES;
     this.resipePortion = RECIPE_PORTIONS_KG;
     this.cookedPortion = COOKED_PORTIONS_KG;
+    this.unitToggles = UNIT_TOGGLES;
     this.numberLimit = 6;
     this.form = document.querySelector(".input > form");
     this.resetButton = this.form.querySelector(".reset-container a");
     this.hoverUnit = this._hoverUnit.bind(this);
-    this.endHoverUnit= this._endHoverUnit.bind(this);
+    this.endHoverUnit = this._endHoverUnit.bind(this);
     this.clickHandler = this._clickHandler.bind(this);
     this.resetHandler = this._resetHandler.bind(this);
     this.inputHandler = this._inputHandler.bind(this);
@@ -28,7 +31,7 @@ export default class FriesCalculator {
   init() {
     this.form.addEventListener("input", this.inputHandler);
     this.resetButton.addEventListener("click", this.resetHandler);
-    document.querySelector('form').addEventListener('mouseover', this.hoverUnit);
+    document.body.addEventListener("mouseover", this.hoverUnit);
     document.addEventListener("click", this.clickHandler);
     const formElements = this.eventUtil.inputObject(this.form);
     Object.keys(formElements).forEach((filedName) =>
@@ -38,15 +41,15 @@ export default class FriesCalculator {
 
   _hoverUnit(e) {
     const element = e.target;
-    if (element.matches('.unit')) {
-      element.classList.add('unit-hover');
-      element.addEventListener('mouseout', this.endHoverUnit)
+    if (element.matches(".unit")) {
+      element.classList.add("unit-hover");
+      element.addEventListener("mouseout", this.endHoverUnit);
     }
   }
 
   _endHoverUnit(e) {
-    e.target.classList.remove('unit-hover');
-    e.target.removeEventListener('mouseout', this.endHoverUnit);
+    e.target.classList.remove("unit-hover");
+    e.target.removeEventListener("mouseout", this.endHoverUnit);
   }
 
   _checkEmpty(e) {
@@ -57,49 +60,53 @@ export default class FriesCalculator {
 
   _resetHandler() {
     this.eventUtil.resetForm(this.form, 0);
+    this._resetUnits();
     this.evenBus.emit("resetForm");
+  }
+
+  _resetUnits() {
+    const unitElements = Array.from(document.querySelectorAll('.unit'));
+    unitElements.forEach(element => {
+      if (!element.dataset.unit) return;
+      const unitKey = element.dataset.unit.split('&')[0];
+      element.dataset.id = this.unitToggles[unitKey][0]
+    })
   }
 
   _clickHandler(e) {
     if (e.target.matches('input[type="text"]')) {
       e.target.select();
-    }else if (e.target.matches('.unit')) {
+    } else if (e.target.matches(".unit")) {
+      // Toggle between units and unit modes
       const currrentUnit = e.target.dataset.id;
-      const unitKeys = e.target.dataset.unit.split('&');
-      const unitToggles = {
-        weight: ['gr', 'kg'],
-        percent: ['%'],
-        mult: ['ea', '10x', '100x', '1000x'],
-        format: ['box', 'bag', 'kg']
-      }
-      let currentUnitKey, unitIndex;
-      for (let i = 0; i < unitKeys.length;i++) {
-        currentUnitKey = unitKeys[i];
-        if (!unitToggles[currentUnitKey].includes(currrentUnit)) continue;
-        unitIndex = Math.min(unitToggles[currentUnitKey].length - 1, unitToggles[currentUnitKey].findIndex(unit => unit === currrentUnit));
-        if (unitIndex === unitToggles[currentUnitKey].length - 1) {
-            if(unitKeys.length > 1) {
-              if (i >= unitKeys.length - 1) {
-                currentUnitKey = unitKeys[0];
-                e.target.dataset.id = unitToggles[currentUnitKey][0];
-              } else {
-                currentUnitKey = unitKeys[i + 1];
-                e.target.dataset.id = unitToggles[currentUnitKey][0];
-              }
+      const hasKeys = e.target.dataset.unit; 
+      if (!hasKeys) return;
+
+      const unitKeys = e.target.dataset.unit.split("&");
+      for (let i = 0; i < unitKeys.length; i++) {
+        let currentUnitKey = unitKeys[i];
+        if (!this.unitToggles[currentUnitKey].includes(currrentUnit)) continue;
+        let unitIndex = Math.min(
+          this.unitToggles[currentUnitKey].length - 1,
+          this.unitToggles[currentUnitKey].findIndex((unit) => unit === currrentUnit)
+        );
+        if (unitIndex === this.unitToggles[currentUnitKey].length - 1) {
+          if (unitKeys.length > 1) {
+            if (i >= unitKeys.length - 1) {
+              currentUnitKey = unitKeys[0];
+              e.target.dataset.id = this.unitToggles[currentUnitKey][0];
             } else {
-              e.target.dataset.id = unitToggles[currentUnitKey][0];
+              currentUnitKey = unitKeys[i + 1];
+              e.target.dataset.id = this.unitToggles[currentUnitKey][0];
             }
-            return 
-        } 
-        e.target.dataset.id = unitToggles[currentUnitKey][unitIndex + 1];
-        return
+          } else {
+            e.target.dataset.id = this.unitToggles[currentUnitKey][0];
+          }
+          return;
+        }
+        e.target.dataset.id = this.unitToggles[currentUnitKey][unitIndex + 1];
+        return;
       }
-       
-
-        
-
-      console.log(unitKeys);
-      // e.target.dataset.id = unitToggles[unitKey];
     }
   }
 
@@ -121,7 +128,9 @@ export default class FriesCalculator {
         { symbol: "\\," },
         { symbol: "\\.", matchLimit: 1 },
       ]);
-      filteredString = this.stringUtil.patternSplice(filteredString, [{pattern: /\,{2,}/, replace: ','}]);
+      filteredString = this.stringUtil.patternSplice(filteredString, [
+        { pattern: /\,{2,}/, replace: "," },
+      ]);
       inputField.value = this.stringUtil.trimValue(filteredString, [
         { value: "0", end: false, remainAmount: 1 },
       ]);

@@ -1,116 +1,128 @@
 main {
-    padding: 2em;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 2em;
+  padding: 2em;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2em;
 }
 
-main>.input,
-main>.output {
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
+main > .input,
+main > .output {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
 }
 
 .title {
-    text-align: center;
-    font-weight: bold;
-    font-size: 2em;
-    letter-spacing: 2px;
-    text-shadow: 3px 2px 1px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-weight: bold;
+  font-size: 2em;
+  letter-spacing: 2px;
+  text-shadow: 3px 2px 1px rgba(0, 0, 0, 0.1);
 }
 
 form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1em;
-    padding: 2em;
-    border-radius: 13px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-    background-color: rgba(250, 250, 250, 0.534);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  padding: 2em;
+  border-radius: 13px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  background-color: rgba(250, 250, 250, 0.534);
 }
 
 fieldset {
-    padding: 1em;
-    border-radius: 13px;
-    border: none;
-    text-align: center;
-    gap: 0.5em;
-    box-shadow: 1px 2px 3px 1px rgba(0, 0, 0, 0.3);
-    background-color: rgb(255, 255, 255);
+  padding: 1em;
+  border-radius: 13px;
+  border: none;
+  text-align: center;
+  gap: 0.5em;
+  box-shadow: 1px 2px 3px 1px rgba(0, 0, 0, 0.3);
+  background-color: rgb(255, 255, 255);
 }
 
 fieldset legend {
-    font-size: 1.5em;
-    font-weight: bold;
-    letter-spacing: 2px;
+  padding: 0.2em 0.5em;
+  border-radius: 3px;
+  background-color: rgb(250, 250, 250);
+  box-shadow: inset -1px -1px 1px rgba(25, 80, 102, 0.8), -1px -1px 1px rgba(8, 183, 252, 0.2);
+  text-align: left;
+  color: rgb(77, 77, 77);
+  font-size: 1em;
+  font-weight: bold;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
 }
 
 form .product-values {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
 form .packaging-amounts {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 form .output-heading {
-    font-weight: bold;
- }
+  font-weight: bold;
+}
 
 form .form-group {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 form .form-group label {
-    font-weight: bold;
+  font-weight: bold;
 }
 
-form .form-group>.unit {
-    position: relative;
+form .form-group > .unit {
+  position: relative;
 }
 
 form .form-group input {
-    position: relative;
-    color: rgb(53, 64, 73);
-    font-weight: bold;
-    padding: 0.5em;
-    border-radius: 5px;
-    border: none;
-    box-shadow: inset 0 0 5px 2px rgba(3, 120, 255, 0.2), 0 0 2px rgb(0, 0, 0, 0.7);
-    outline-color: blue;
-    outline: none;
+  position: relative;
+  color: rgb(53, 64, 73);
+  font-weight: bold;
+  padding: 0.5em;
+  border-radius: 5px;
+  border: none;
+  box-shadow: inset 0 0 5px 2px rgba(3, 120, 255, 0.2),
+    0 0 2px rgb(0, 0, 0, 0.7);
+  outline-color: blue;
+  outline: none;
 }
 
 form .form-group input:focus {
-    box-shadow: inset 0 0 5px 1px rgb(0, 225, 255, 0.6);
+  box-shadow: inset 0 0 5px 1px rgb(0, 225, 255, 0.6);
 }
 
-
-form .form-group>.unit:after {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 100;
-    color: rgb(0, 195, 255);
-    cursor: pointer;
+form .form-group > .unit:after {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  color: rgb(0, 195, 255);
+  cursor: pointer;
 }
 
-form .form-group>.unit.unit-hover:after {
-    color: red;
+form .form-group > .unit.unit-hover:after {
+  color: red;
 }
 
-form .form-group>.unit:after {
-    content: attr(data-id);
-    font-weight: bold;
+form .form-group > .unit:after {
+  content: attr(data-id);
+  font-weight: bold;
 }
 
+form .form-group > .unit[data-id="£"]:after {
+  color: rgb(112, 112, 112);
+  cursor: auto;
+}

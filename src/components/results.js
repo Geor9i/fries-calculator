@@ -22,8 +22,7 @@ export default class ResultsDisplay {
     _displayData(data) {
         const inputObject = this.evenUtil.inputObject(this.form);
         inputObject['actualUsage'].value = data.toFixed(2);
-        inputObject['actualBox'].value = (data / this.proportions.box).toFixed(2);
-        inputObject['actualBag'].value = (data / this.proportions.bag).toFixed(2);
+        // inputObject['actualBox'].value = (data / this.proportions.box).toFixed(2);
     }
 
 }

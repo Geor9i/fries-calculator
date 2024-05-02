@@ -1,5 +1,7 @@
+import DependencyHub from "../dependencyResolvers/dependencyHub.js";
+
 export default class StringUtil {
-  constructor() {}
+  // static dependencies = ['EventUtil'];
 
   /**
    *
@@ -72,4 +74,24 @@ export default class StringUtil {
     });
     return string;
   }
+
+  sanitizeInput(form) {
+    const formObj = this.eventUtil.inputObject(form);
+    Object.keys(formObj).forEach((key) => {
+      const inputField = formObj[key];
+      let filteredString = this.stringUtil.filterString(inputField.value, [
+        { symbol: "\\d", matchLimit: this.numberLimit },
+        { symbol: "\\," },
+        { symbol: "\\.", matchLimit: 1 },
+      ]);
+      filteredString = this.stringUtil.patternSplice(filteredString, [
+        { pattern: /\,{2,}/, replace: "," },
+      ]);
+      inputField.value = this.stringUtil.trimValue(filteredString, [
+        { value: "0", end: false, remainAmount: 1 },
+      ]);
+    });
+  }
 }
+
+DependencyHub.add(StringUtil);

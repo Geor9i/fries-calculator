@@ -20,3 +20,18 @@ export const PROPORTIONS_KG = {
     box: 15,
     bag: 1.5,
 }
+
+export const UNIT_TOGGLES = {
+    weight: ["kg", "gr"],
+    percent: ["%"],
+    mult: ["ea", "10x", "100x"],
+    format: ["box", "bag", "kg"],
+  };
+
+  export const PRICES = {
+    friesBoxFrozen: 20.08,
+    friesBagRg: 1.99,
+    friesBagLg: 2.69,
+    snackbox: 2.99,
+    megabox: 5.49,
+  }
