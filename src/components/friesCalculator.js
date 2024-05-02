@@ -64,12 +64,42 @@ export default class FriesCalculator {
     if (e.target.matches('input[type="text"]')) {
       e.target.select();
     }else if (e.target.matches('.unit')) {
-      const data = e.target.dataset.id;
+      const currrentUnit = e.target.dataset.id;
+      const unitKeys = e.target.dataset.unit.split('&');
       const unitToggles = {
-        kg: 'gr',
-        gr: 'kg',
+        weight: ['gr', 'kg'],
+        percent: ['%'],
+        mult: ['ea', '10x', '100x', '1000x'],
+        format: ['box', 'bag', 'kg']
       }
-      e.target.dataset.id = unitToggles[data];
+      let currentUnitKey, unitIndex;
+      for (let i = 0; i < unitKeys.length;i++) {
+        currentUnitKey = unitKeys[i];
+        if (!unitToggles[currentUnitKey].includes(currrentUnit)) continue;
+        unitIndex = Math.min(unitToggles[currentUnitKey].length - 1, unitToggles[currentUnitKey].findIndex(unit => unit === currrentUnit));
+        if (unitIndex === unitToggles[currentUnitKey].length - 1) {
+            if(unitKeys.length > 1) {
+              if (i >= unitKeys.length - 1) {
+                currentUnitKey = unitKeys[0];
+                e.target.dataset.id = unitToggles[currentUnitKey][0];
+              } else {
+                currentUnitKey = unitKeys[i + 1];
+                e.target.dataset.id = unitToggles[currentUnitKey][0];
+              }
+            } else {
+              e.target.dataset.id = unitToggles[currentUnitKey][0];
+            }
+            return 
+        } 
+        e.target.dataset.id = unitToggles[currentUnitKey][unitIndex + 1];
+        return
+      }
+       
+
+        
+
+      console.log(unitKeys);
+      // e.target.dataset.id = unitToggles[unitKey];
     }
   }
 
