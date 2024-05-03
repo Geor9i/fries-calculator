@@ -5,6 +5,7 @@ export default class EventUtil {
 
   constructor () {
     this.maxParentCounter = 10;
+    this.test = this.stringUtil.trimValue('00bebe00', '00')
   }
 
   getRelatives(e) {
@@ -51,4 +52,3 @@ export default class EventUtil {
 }
 
 DependencyHub.add(EventUtil);
-console.log(EventUtil.prototype);

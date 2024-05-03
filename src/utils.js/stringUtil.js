@@ -51,6 +51,7 @@ export default class StringUtil {
   }
 
   trimValue(string, trimValues = []) {
+    trimValues = Array.isArray(trimValues) ? trimValues : [{value: trimValues}];
     trimValues.forEach((entry) => {
       const { value, start, end, remainAmount } = entry;
       let remain = remainAmount ? remainAmount : 0;
@@ -79,15 +80,15 @@ export default class StringUtil {
     const formObj = this.eventUtil.inputObject(form);
     Object.keys(formObj).forEach((key) => {
       const inputField = formObj[key];
-      let filteredString = this.stringUtil.filterString(inputField.value, [
+      let filteredString = this.filterString(inputField.value, [
         { symbol: "\\d", matchLimit: this.numberLimit },
         { symbol: "\\," },
         { symbol: "\\.", matchLimit: 1 },
       ]);
-      filteredString = this.stringUtil.patternSplice(filteredString, [
+      filteredString = this.patternSplice(filteredString, [
         { pattern: /\,{2,}/, replace: "," },
       ]);
-      inputField.value = this.stringUtil.trimValue(filteredString, [
+      inputField.value = this.trimValue(filteredString, [
         { value: "0", end: false, remainAmount: 1 },
       ]);
     });
