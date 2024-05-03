@@ -11,6 +11,8 @@ export default class FriesCalculator {
     this.eventUtil = UtilInjector.event;
     this.evenBus = UtilInjector.eventBus;
     this.stringUtil = UtilInjector.string;
+    console.log(this.stringUtil);
+    console.log(this.eventUtil);
     this.portionEgdeCases = PORTION_EGDE_CASES;
     this.resipePortion = RECIPE_PORTIONS_KG;
     this.cookedPortion = COOKED_PORTIONS_KG;

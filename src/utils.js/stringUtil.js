@@ -1,7 +1,12 @@
 import DependencyHub from "../dependencyResolvers/dependencyHub.js";
 
 export default class StringUtil {
-  // static dependencies = ['EventUtil'];
+  static dependencies = ['EventUtil'];
+
+  constructor() {
+    this.eventUtil;
+    console.log('this.eventUtil: ', this.eventUtil);
+  }
 
   /**
    *
