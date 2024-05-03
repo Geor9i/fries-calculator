@@ -1,4 +1,5 @@
 import { PROPORTIONS_KG } from "../constants.js";
+import DependencyHub from "../dependencyResolvers/dependencyHub.js";
 import UtilInjector from "../utils.js/utilInjector.js";
 
 export default class ResultsDisplay {
@@ -26,3 +27,5 @@ export default class ResultsDisplay {
     }
 
 }
+
+DependencyHub.add(ResultsDisplay);

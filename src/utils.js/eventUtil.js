@@ -5,7 +5,6 @@ export default class EventUtil {
 
   constructor () {
     this.maxParentCounter = 10;
-    this.test = this.stringUtil.trimValue('00bebe00', '00')
   }
 
   getRelatives(e) {
@@ -44,6 +43,9 @@ export default class EventUtil {
     }, {})
   }
 
+  testFunc(num) {
+    return num + 2;
+  }
   
   resetForm(formElement, resetValue = '') {
     const formObj = this.inputObject(formElement);

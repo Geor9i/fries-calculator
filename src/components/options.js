@@ -1,4 +1,5 @@
 import { PRICES } from "../constants.js";
+import DependencyHub from "../dependencyResolvers/dependencyHub.js";
 import UtilInjector from "../utils.js/utilInjector.js";
 
 export default class Options {
@@ -59,3 +60,6 @@ export default class Options {
   }
 
 }
+
+
+DependencyHub.add(Options);

@@ -1,18 +1,16 @@
-import UtilInjector from "../utils.js/utilInjector.js";
 import {
   PORTION_EGDE_CASES,
   RECIPE_PORTIONS_KG,
   COOKED_PORTIONS_KG,
   UNIT_TOGGLES
 } from "../constants.js";
+import DependencyHub from "../dependencyResolvers/dependencyHub.js";
 
 export default class FriesCalculator {
+
+  static dependencies = ['StringUtil', 'EventBus', 'EventUtil']
+
   constructor() {
-    this.eventUtil = UtilInjector.event;
-    this.evenBus = UtilInjector.eventBus;
-    this.stringUtil = UtilInjector.string;
-    console.log(this.stringUtil);
-    console.log(this.eventUtil);
     this.portionEgdeCases = PORTION_EGDE_CASES;
     this.resipePortion = RECIPE_PORTIONS_KG;
     this.cookedPortion = COOKED_PORTIONS_KG;
@@ -62,7 +60,7 @@ export default class FriesCalculator {
   _resetHandler() {
     this.eventUtil.resetForm(this.form, 0);
     this._resetUnits();
-    this.evenBus.emit("resetForm");
+    this.eventBus.emit("resetForm");
   }
 
   _resetUnits() {
@@ -117,7 +115,7 @@ export default class FriesCalculator {
     this.sanitizeInput(form);
     const formData = this.eventUtil.getFormData(form);
     let result = this.calculate(formData);
-    this.evenBus.emit("calculatorData", result);
+    this.eventBus.emit("calculatorData", result);
   }
 
   sanitizeInput(form) {
@@ -222,3 +220,6 @@ export default class FriesCalculator {
     };
   }
 }
+
+
+DependencyHub.add(FriesCalculator);

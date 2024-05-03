@@ -1,3 +1,5 @@
+import DependencyHub from "../dependencyResolvers/dependencyHub.js";
+
 export default class EventBus {
     constructor() {
         this.events = {};
@@ -31,3 +33,5 @@ export default class EventBus {
         }
     }
 }
+
+DependencyHub.add(EventBus);

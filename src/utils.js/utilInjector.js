@@ -6,5 +6,5 @@ import StringUtil from "./stringUtil.js";
 export default class UtilInjector {
     static string = DependencyHub.provide(StringUtil);
     static event = DependencyHub.provide(EventUtil);
-    static eventBus = new EventBus();
+    static eventBus = DependencyHub.provide(EventBus);
 }
