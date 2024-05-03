@@ -1,7 +1,7 @@
 import DependencyHub from "../dependencyResolvers/dependencyHub.js";
 
 export default class EventUtil {
-  // static dependencies = ['StringUtil'];
+  static dependencies = ['StringUtil'];
 
   constructor () {
     this.maxParentCounter = 10;
@@ -50,5 +50,5 @@ export default class EventUtil {
   }
 }
 
-// DependencyHub.add(EventUtil);
+DependencyHub.add(EventUtil);
 console.log(EventUtil.prototype);
