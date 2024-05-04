@@ -1,12 +1,11 @@
 import { PRICES } from "../constants.js";
 import DependencyHub from "../dependencyResolvers/dependencyHub.js";
-import UtilInjector from "../utils.js/utilInjector.js";
 
 export default class Options {
+
+  static dependencies = ['StringUtil', 'EventBus', 'EventUtil']
+
   constructor() {
-    this.eventUtil = UtilInjector.event;
-    this.evenBus = UtilInjector.eventBus;
-    this.stringUtil = UtilInjector.string;
     this.optionsButton = document.querySelector('.options-button-container .options-button');
     this.optionsSection = document.querySelector('section.options');
     this.form = this.optionsSection.querySelector('form');
@@ -22,34 +21,22 @@ export default class Options {
    this.optionsButton.addEventListener('click', this.toggleMenu);
    this.form.addEventListener('input', this.inputHandler);
    this.form.addEventListener('change', this.updateOptions);
+  //  Populate fields
+   const fieldsObj = this.eventUtil.inputObject(this.form);
+    Object.keys(fieldsObj).forEach(key => fieldsObj[key].value = this.prices[key])
   }
 
   _updateOptions(e){
-    console.log(e.target.value);
+    const name = e.target.name;
+    this.prices[name] = Number(e.target.value);
+    console.log(name);
+    console.log(this.prices);
   }
 
   _inputHandler(e) {
     e.preventDefault();
     const form = e.currentTarget;
-    this.sanitizeInput(form);
-  }
-
-  sanitizeInput(form) {
-    const formObj = this.eventUtil.inputObject(form);
-    Object.keys(formObj).forEach((key) => {
-      const inputField = formObj[key];
-      let filteredString = this.stringUtil.filterString(inputField.value, [
-        { symbol: "\\d", matchLimit: this.numberLimit },
-        { symbol: "\\," },
-        { symbol: "\\.", matchLimit: 1 },
-      ]);
-      filteredString = this.stringUtil.patternSplice(filteredString, [
-        { pattern: /\,{2,}/, replace: "," },
-      ]);
-      inputField.value = this.stringUtil.trimValue(filteredString, [
-        { value: "0", end: false, remainAmount: 1 },
-      ]);
-    });
+    this.stringUtil.sanitizeInput(form);
   }
 
   _toggleMenu() {

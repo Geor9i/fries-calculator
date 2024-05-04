@@ -92,6 +92,9 @@ export default class StringUtil {
       inputField.value = this.trimValue(filteredString, [
         { value: "0", end: false, remainAmount: 1 },
       ]);
+      if (!inputField.value) {
+        inputField.value = 0;
+      }
     });
   }
 }

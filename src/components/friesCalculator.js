@@ -23,7 +23,6 @@ export default class FriesCalculator {
     this.clickHandler = this._clickHandler.bind(this);
     this.resetHandler = this._resetHandler.bind(this);
     this.inputHandler = this._inputHandler.bind(this);
-    this.checkEmpty = this._checkEmpty.bind(this);
     this.init();
   }
 
@@ -33,9 +32,6 @@ export default class FriesCalculator {
     document.body.addEventListener("mouseover", this.hoverUnit);
     document.addEventListener("click", this.clickHandler);
     const formElements = this.eventUtil.inputObject(this.form);
-    Object.keys(formElements).forEach((filedName) =>
-      formElements[filedName].addEventListener("blur", this.checkEmpty)
-    );
   }
 
   _hoverUnit(e) {
@@ -49,12 +45,6 @@ export default class FriesCalculator {
   _endHoverUnit(e) {
     e.target.classList.remove("unit-hover");
     e.target.removeEventListener("mouseout", this.endHoverUnit);
-  }
-
-  _checkEmpty(e) {
-    if (e.currentTarget.value === "") {
-      e.target.value = 0;
-    }
   }
 
   _resetHandler() {
@@ -112,28 +102,10 @@ export default class FriesCalculator {
   _inputHandler(e) {
     e.preventDefault();
     const form = e.currentTarget;
-    this.sanitizeInput(form);
+    this.stringUtil.sanitizeInput(form);
     const formData = this.eventUtil.getFormData(form);
-    let result = this.calculate(formData);
-    this.eventBus.emit("calculatorData", result);
-  }
-
-  sanitizeInput(form) {
-    const formObj = this.eventUtil.inputObject(form);
-    Object.keys(formObj).forEach((key) => {
-      const inputField = formObj[key];
-      let filteredString = this.stringUtil.filterString(inputField.value, [
-        { symbol: "\\d", matchLimit: this.numberLimit },
-        { symbol: "\\," },
-        { symbol: "\\.", matchLimit: 1 },
-      ]);
-      filteredString = this.stringUtil.patternSplice(filteredString, [
-        { pattern: /\,{2,}/, replace: "," },
-      ]);
-      inputField.value = this.stringUtil.trimValue(filteredString, [
-        { value: "0", end: false, remainAmount: 1 },
-      ]);
-    });
+    const data = this.calculate(formData);
+    this.eventBus.emit("calculatorData", data);
   }
 
   calculate(formData) {
@@ -145,7 +117,7 @@ export default class FriesCalculator {
     data.friesScoop = Math.max(0, data.friesScoop - data.megabox);
     const portionShares = this.getPortionShares(data);
     const actualUsage = this.forecastActualUsage(data);
-    return actualUsage;
+    return {actualUsage, theoreticalUsage: formData.theoreticalUsage};
   }
 
   forecastActualUsage(formData) {
