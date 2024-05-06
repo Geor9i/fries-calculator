@@ -3,6 +3,7 @@
 @import url("input.css");
 @import url("output.css");
 @import url("options.css");
+@import url("test.css");
 
 :root {
     --form-blue: rgb(0, 225, 255);

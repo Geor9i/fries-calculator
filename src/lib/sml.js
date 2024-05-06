@@ -9,7 +9,8 @@ export default class SML {
         this.root = null;
         this.selfClosingTags = selfClosingTags;
         this.regex = patterns;
-        this.validHTMLElements = validHTMLElements
+        this.validHTMLElements = validHTMLElements;
+        this.components = null;
     }
     setRoot(rootElement) {
         if (rootElement instanceof HTMLElement) {
@@ -31,24 +32,38 @@ export default class SML {
         })
         const detectElement = (currentString => {
             const detectedElements = [];
+            
+
             const matches = currentString.matchAll(this.regex.element);
-            for (let match of matches) {
+            for (const match of matches) {
+                const attributes = {};
+                let tagProps = {};
+                let children = [];
                 const string = match[0];
                 const tagName = match.groups.tagName || match.groups.tagname;
-                const selfClosingTag = this.selfClosingTags.includes(tagName);
-                const tag = selfClosingTag ? string.match(this.regex.selfClosingTag) : string.match(this.regex.openingTag);
-                let attributes = {};
-                let attributeMatch = tag[0].matchAll(this.regex.attribute);
-                for(let entry of attributeMatch){
+                const isComponent = !this.validHTMLElements.includes(tagName);
+                let selfClosingTag, tag;
+                if (isComponent) {
+                    selfClosingTag = string.match(this.regex.selfClosingTag)
+                    tag = selfClosingTag ? selfClosingTag : string.match(this.regex.openingTag);
+                    tagProps = {
+                        selfClosing: !!selfClosingTag,
+                        isComponent: true
+                    }
+                } else {
+                    selfClosingTag = this.selfClosingTags.includes(tagName);
+                    tag = selfClosingTag ? string.match(this.regex.selfClosingTag) : string.match(this.regex.openingTag);
+                }
+                const attributeMatch = tag[0].matchAll(this.regex.attribute);
+                for(const entry of attributeMatch){
                     const { attribute, value } = entry.groups;
                     attributes[attribute] = value ? value : true;
                 }
                 let stripedElementString = string.replace(this.regex[selfClosingTag ? 'selfClosingTag' : 'openingTag'], '');
                 if (!selfClosingTag) {
-                    let closingTags = stripedElementString.match(this.regex.closingTag);
+                    const closingTags = stripedElementString.match(this.regex.closingTag);
                     stripedElementString = stripedElementString.replace(closingTags[closingTags.length -1], '');
                 }
-                let children = [];
                 if (stripedElementString.match(this.regex.element) !== null) {
                     children.push(stripedElementString.replace(this.regex.element, ''));
                     children.push(...detectElement(stripedElementString));
@@ -61,7 +76,7 @@ export default class SML {
                     }
                     return true
                 })
-                detectedElements.push({tagName, attributes, children});
+                detectedElements.push({tagName, attributes, children, tagProps});
             }
             return detectedElements;
         })
@@ -77,9 +92,17 @@ export default class SML {
                 elementParent.appendChild(textNode);
                 return;
             }
-            const { tagName, attributes, children } = smlElement;
-            if(!this.validHTMLElements.includes(tagName)) {
-                throw new Error(`${tagName} is not a valid HTML ELement`);
+            const { tagName, attributes, children, tagProps } = smlElement;
+            if(tagProps.isComponent) {
+                let componentFragment = document.createDocumentFragment();
+                const component = this.components.find(entry => entry.name === tagName);
+                if (component) {
+                    const instance = new component.component();
+                    const domMap = this.m`${instance.render()}`;
+                    this.display(componentFragment, ...domMap)
+                    fragment.appendChild(componentFragment);
+                }
+                return
             }
             const element = document.createElement(tagName);
             for (let attribute in attributes) {
@@ -92,6 +115,19 @@ export default class SML {
         })
         elementParent.appendChild(fragment);
     }
+
+    entry(appComnponent) {
+        const app = new appComnponent();
+        const domMap = this.m `${app.render()}`;
+        this.display(this.root, ...domMap);
+    }
+
+    loadComponents(...components) {
+        this.components = components.map(component => ({name: component.name, component}))
+    }
+
+
+
 }
 
 DependencyHub.add(SML);
