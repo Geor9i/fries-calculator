@@ -97,8 +97,9 @@ export default class SML {
                 let componentFragment = document.createDocumentFragment();
                 const component = this.components.find(entry => entry.name === tagName);
                 if (component) {
-                    const instance = new component.component();
+                    const instance = new component.component(attributes);
                     const domMap = this.m`${instance.render()}`;
+                    console.log(attributes);
                     this.display(componentFragment, ...domMap)
                     fragment.appendChild(componentFragment);
                 }

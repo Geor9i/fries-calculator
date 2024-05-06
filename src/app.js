@@ -22,7 +22,8 @@ class App extends SMLComponent {
     render() {
         return `
         <main>
-        <Heading />
+        <Heading text="This is my text" />
+        <Heading text="This is my second text" />
         </main>`
     }
 
