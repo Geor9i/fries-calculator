@@ -62,7 +62,9 @@ export default class SML {
                 let stripedElementString = string.replace(this.regex[selfClosingTag ? 'selfClosingTag' : 'openingTag'], '');
                 if (!selfClosingTag) {
                     const closingTags = stripedElementString.match(this.regex.closingTag);
-                    stripedElementString = stripedElementString.replace(closingTags[closingTags.length -1], '');
+                    if (closingTags) {
+                        stripedElementString = stripedElementString.replace(closingTags[closingTags.length -1], '');
+                    }
                 }
                 if (stripedElementString.match(this.regex.element) !== null) {
                     children.push(stripedElementString.replace(this.regex.element, ''));
@@ -99,7 +101,6 @@ export default class SML {
                 if (component) {
                     const instance = new component.component(attributes);
                     const domMap = this.m`${instance.render()}`;
-                    console.log(attributes);
                     this.display(componentFragment, ...domMap)
                     fragment.appendChild(componentFragment);
                 }

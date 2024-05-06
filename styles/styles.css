@@ -9,7 +9,7 @@
     --form-blue: rgb(0, 225, 255);
 }
 
-body {
+.root {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -18,7 +18,7 @@ body {
 }
 
 
-body > .title {
+.root > .title {
     font-size: 2.5em;
     font-weight: bold;
     letter-spacing: 2px;
