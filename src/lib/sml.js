@@ -66,11 +66,10 @@ export default class SML {
             return detectedElements;
         })
         let detectedElements = detectElement(linkedString);
-        console.log(detectedElements);
-        this.render(this.root, ...detectedElements)
+        return detectedElements;
     }
 
-    render(elementParent, ...smlElements) {
+    display(elementParent, ...smlElements) {
         const fragment = document.createDocumentFragment();
         smlElements.forEach(smlElement => {
             if (typeof smlElement === 'string') {
@@ -87,7 +86,7 @@ export default class SML {
                 element.setAttribute(attribute, attributes[attribute])
             }
             if (!this.selfClosingTags.includes(tagName) && children.length) {
-                  this.render(element, ...children);
+                  this.display(element, ...children);
             }
             fragment.appendChild(element);
         })
