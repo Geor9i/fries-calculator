@@ -6,17 +6,21 @@ export const PORTION_EGDE_CASES = {
     friesScoop: {min: 0.120, max:  0.288}
 }
 
-export const RECIPE_PORTIONS_KG = {
-    rg: 0.157,
-    lg: 0.22,
+export const FROZEN_PORTIONS_KG = {
+    friesBag: 0.157,
+    friesScoop: 0.22,
+    snackbox: 0.157,
+    megabox: 0.22,
 }
 
 export const COOKED_PORTIONS_KG = {
-    rg: 0.118,
-    lg: 0.134 
+    friesBag: 0.118,
+    friesScoop: 0.134, 
+    snackbox: 0.118,
+    megabox: 0.134, 
 }
 
-export const PROPORTIONS_KG = {
+export const FROZEN_INVENTORY_WEIGHT_KG = {
     box: 15,
     bag: 1.5,
 }
@@ -30,8 +34,8 @@ export const UNIT_TOGGLES = {
 
   export const PRICES = {
     friesBoxFrozen: 20.08,
-    friesBagRg: 1.99,
-    friesBagLg: 2.69,
+    friesBag: 1.99,
+    friesScoop: 2.69,
     snackbox: 2.99,
     megabox: 5.49,
   }

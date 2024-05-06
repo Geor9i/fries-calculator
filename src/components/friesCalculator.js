@@ -1,18 +1,14 @@
-import {
-  PORTION_EGDE_CASES,
-  RECIPE_PORTIONS_KG,
-  COOKED_PORTIONS_KG,
-  UNIT_TOGGLES
-} from "../constants.js";
 import DependencyHub from "../dependencyResolvers/dependencyHub.js";
+import UnitValues from "./unitValues.js";
 
 export default class FriesCalculator {
 
   static dependencies = ['StringUtil', 'EventBus', 'EventUtil']
 
   constructor() {
+    this.subscriberId = 'FriesCalculator';
     this.portionEgdeCases = PORTION_EGDE_CASES;
-    this.resipePortion = RECIPE_PORTIONS_KG;
+    this.resipePortion = FROZEN_PORTIONS_KG;
     this.cookedPortion = COOKED_PORTIONS_KG;
     this.unitToggles = UNIT_TOGGLES;
     this.numberLimit = 6;
@@ -32,6 +28,12 @@ export default class FriesCalculator {
     document.body.addEventListener("mouseover", this.hoverUnit);
     document.addEventListener("click", this.clickHandler);
     const formElements = this.eventUtil.inputObject(this.form);
+    this.eventBus.on("OptionsUpdate", this.subscriberId, this._updateOptionsReceiveRecalculate)
+  }
+
+  _updateOptionsReceiveRecalculate(data) {
+    const [key, value] = Object.entries(data)[0];
+    console.log({key, value});
   }
 
   _hoverUnit(e) {

@@ -1,4 +1,4 @@
-import { PROPORTIONS_KG, PRICES } from "../constants.js";
+import UnitValues from "./unitValues.js";
 import DependencyHub from "../dependencyResolvers/dependencyHub.js";
 
 export default class ResultsDisplay {
@@ -6,7 +6,7 @@ export default class ResultsDisplay {
 
   constructor() {
     this.prices = PRICES;
-    this.proportions = PROPORTIONS_KG;
+    this.proportions = FROZEN_INVENTORY_KG;
     this.subscriberId = "FriesCalculator";
     this.displayData = this._displayData.bind(this);
     this.element = document.querySelector("main .output");
@@ -23,11 +23,12 @@ export default class ResultsDisplay {
 
   _displayData(data) {
     const inputObject = this.eventUtil.inputObject(this.form);
-    console.log(data);
+    const prices = UnitValues.getValue('PRICES');
+    const frozenWeight = UnitValues.getValue('_FROZEN_INVENTORY_WEIGHT_KG');
     inputObject["actualUsage"].value = data.actualUsage.toFixed(2);
-    inputObject["actualPrice"].value = ((inputObject["actualUsage"].value / this.proportions.box) * this.prices.friesBoxFrozen).toFixed(2)
+    inputObject["actualPrice"].value = ((inputObject["actualUsage"].value / frozenWeight.box) * prices.friesBoxFrozen).toFixed(2)
     inputObject["theoreticalUsage"].value = data.theoreticalUsage.toFixed(2);
-    inputObject["theoreticalPrice"].value = ((inputObject["theoreticalUsage"].value / this.proportions.box) * this.prices.friesBoxFrozen).toFixed(2)
+    inputObject["theoreticalPrice"].value = ((inputObject["theoreticalUsage"].value / frozenWeight.box) * prices.friesBoxFrozen).toFixed(2)
     // inputObject['actualBox'].value = (data / this.proportions.box).toFixed(2);
   }
 }
