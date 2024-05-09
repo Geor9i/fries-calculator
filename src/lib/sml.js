@@ -41,48 +41,12 @@ export default class SML {
         const tagTree = (currentString => {
             const tagTree = [];
             const availableTags = this.htmlUtil.findTags(currentString);
-            const tagPairs = [];
-            // Attempt to find all tag pairs
-           while(availableTags.length) {
-                let openTag = availableTags.shift();
-                const { name, type } = openTag;
-                if (type === 'open') {
-                    let sameTags = availableTags.filter(tag => tag.name === name && (tag.type === 'close' || tag.type === 'open'));
-                    let opentags = 0;
-                    for (let tag of sameTags) {
-                        if (tag.type === 'close' && opentags <= 0) {
-                            tagPairs.push({open: openTag, close: tag});
-                            break;
-                        } else if (tag.type === 'close' && opentags > 0) {
-                            opentags--;
-                        } else if (tag.type === 'open'){
-                            opentags++
-                        }
-                    }
-                } else if (type === 'selfClose') {
-                    tagPairs.push({open: openTag, close: openTag})
-                }
-            }
-            tagPairs.map((pair, i) => {
-                    pair.string = currentString.slice(pair.open.startIndex, pair.close.endIndex);
-                    pair.id = i;
-                    return pair
-            });
-
-            const sortTag = (a, b) => {
-                if (a.open.startIndex >= b.open.startIndex && a.close.endIndex <= b.close.endIndex) {
-                    return 1
-                } else {
-                    return -1
-                }
-            }
-
-            const sortedTagPairs = tagPairs.sort(sortTag);
+            const tagPairs = this.htmlUtil.pairTags(availableTags);
             const usedIndexes = {};
             let buildTree = (parent) => {
                 const tagTree = [];
                 if (!parent) {
-                    parent = sortedTagPairs.find(pair => !usedIndexes[pair.id]);
+                    parent = tagPairs.find(pair => !usedIndexes[pair.id]);
                     if (!parent) return tagTree;
                     usedIndexes[parent.id] = true;
                 }
@@ -105,11 +69,11 @@ export default class SML {
                 if (parent.open.type === 'selfClose') {
                     return tagTree;
                 }
-                let directChildren = sortedTagPairs.filter(pair => !usedIndexes[pair.id] && pair.open.startIndex >= parent.open.startIndex && pair.close.endIndex <= parent.close.endIndex).sort(sortTag);
+                let directChildren = tagPairs.filter(pair => !usedIndexes[pair.id] && pair.open.startIndex >= parent.open.startIndex && pair.close.endIndex <= parent.close.endIndex).sort(sortTag);
                 if (!directChildren.length) {
                     return tagTree;
                 }
-                while(Object.keys(usedIndexes).length < sortedTagPairs.length) {
+                while(Object.keys(usedIndexes).length < tagPairs.length) {
                     let child = directChildren.find(pair => !usedIndexes[pair.id]);
                     if (!child) return tagTree;
                     usedIndexes[child.id] = true
@@ -118,7 +82,7 @@ export default class SML {
                 }
                 return tagTree;
             }
-            while(Object.keys(usedIndexes).length < sortedTagPairs.length) {
+            while(Object.keys(usedIndexes).length < tagPairs.length) {
                 tagTree.unshift(...buildTree());
             }
             let surroundText = [];

@@ -37,17 +37,22 @@ export default class HTMLInterpreters {
     }
 
     pairTags(unpairedTags) {
-        const tagPairs = [];
+        const allTags = unpairedTags.map((tag, i) => ({...tag, id: i}));
+        let tagPairs = [];
+        const usedIndexes = {};
         // Attempt to find all tag pairs
-       while(unpairedTags.length) {
-            let openTag = unpairedTags.shift();
-            const { name, type } = openTag;
+       while(allTags.length !== usedIndexes.length) {
+            let currentTag = allTags.find((tag) => !usedIndexes[tag.id]);
+            if (!currentTag) return tagPairs;
+            usedIndexes[currentTag.id] = true;
+            const { name, type } = currentTag;
             if (type === 'open') {
-                let sameTags = unpairedTags.filter(tag => tag.name === name && (tag.type === 'close' || tag.type === 'open'));
+                let potentialTagPairs = allTags.filter((tag) => !usedIndexes[tag.id] && tag.name === name && (tag.type === 'close' || tag.type === 'open'));
                 let opentags = 0;
-                for (let tag of sameTags) {
+                for (let tag of potentialTagPairs) {
                     if (tag.type === 'close' && opentags <= 0) {
-                        tagPairs.push({open: openTag, close: tag});
+                        tagPairs.push({open: currentTag, close: tag});
+                        usedIndexes[tag.id] = true;
                         break;
                     } else if (tag.type === 'close' && opentags > 0) {
                         opentags--;
@@ -56,24 +61,24 @@ export default class HTMLInterpreters {
                     }
                 }
             } else if (type === 'selfClose') {
-                tagPairs.push({open: openTag, close: openTag})
+                tagPairs.push({open: currentTag, close: currentTag})
             }
         }
-        tagPairs.map((pair, i) => {
+        tagPairs = tagPairs.map((pair, i) => {
                 pair.string = currentString.slice(pair.open.startIndex, pair.close.endIndex);
                 pair.id = i;
                 return pair
         });
 
-        const sortTag = (a, b) => {
-            if (a.open.startIndex >= b.open.startIndex && a.close.endIndex <= b.close.endIndex) {
-                return 1
-            } else {
-                return -1
-            }
-        }
+        return tagPairs.sort(this.sortTagPair);
+    }
 
-        const sortedTagPairs = tagPairs.sort(sortTag);
+    sortTagPair(a, b) {
+        if (a.open.startIndex >= b.open.startIndex && a.close.endIndex <= b.close.endIndex) {
+            return 1
+        } else {
+            return -1
+        }
     }
 }
 
