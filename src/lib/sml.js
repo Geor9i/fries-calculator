@@ -30,59 +30,131 @@ export default class SML {
                 placeHolders.push({index: linkedString.length, value})
             }
         })
-        const detectElement = (currentString => {
-            const detectedElements = [];
-            
 
-            const matches = currentString.matchAll(this.regex.element);
-            for (const match of matches) {
-                const attributes = {};
-                let tagProps = {};
-                let children = [];
-                const string = match[0];
-                const tagName = match.groups.tagName || match.groups.tagname;
-                const isComponent = !this.validHTMLElements.includes(tagName);
-                let selfClosingTag, tag;
-                if (isComponent) {
-                    selfClosingTag = string.match(this.regex.selfClosingTag)
-                    tag = selfClosingTag ? selfClosingTag : string.match(this.regex.openingTag);
-                    tagProps = {
-                        selfClosing: !!selfClosingTag,
-                        isComponent: true
+        if (!this.regex.element.test(linkedString) && linkedString.length && !/^\s+$/g.test(linkedString)) {
+            return [linkedString];
+        }
+
+        const tagTree = (currentString => {
+            const tagTree = [];
+            const availableTags = [];
+            const tagTypes = {
+                open: this.regex.openingTag,
+                selfClose: this.regex.selfClosingTag,
+                close: this.regex.closingTag,
+            }
+            console.log(currentString);
+            const tagCollection = currentString.matchAll(this.regex.tag);
+            for(let tagMatch of tagCollection) {
+                const name = tagMatch.groups.tagName;
+                let type = Object.keys(tagTypes).find(expr => tagTypes[expr].test(tagMatch[0]));
+                const startIndex = tagMatch.index;
+                const endIndex = startIndex + tagMatch[0].length;
+                availableTags.push({name, type, startIndex: startIndex ,endIndex: endIndex});
+            }
+            const tagPairs = [];
+           while(availableTags.length) {
+                let openTag = availableTags.shift();
+                const { name, type } = openTag;
+                if (type === 'open') {
+                    let sameTags = availableTags.filter(tag => tag.name === name && (tag.type === 'close' || tag.type === 'open'));
+                    let opentags = 0;
+                    for (let tag of sameTags) {
+                        if (tag.type === 'close' && opentags <= 0) {
+                            tagPairs.push({open: openTag, close: tag});
+                            break;
+                        } else if (tag.type === 'close' && opentags > 0) {
+                            opentags--;
+                        } else if (tag.type === 'open'){
+                            opentags++
+                        }
                     }
-                } else {
-                    selfClosingTag = this.selfClosingTags.includes(tagName);
-                    tag = selfClosingTag ? string.match(this.regex.selfClosingTag) : string.match(this.regex.openingTag);
+                } else if (type === 'selfClose') {
+                    tagPairs.push({open: openTag, close: openTag})
                 }
-                const attributeMatch = tag[0].matchAll(this.regex.attribute);
+            }
+            tagPairs.map((pair, i) => {
+                    pair.string = currentString.slice(pair.open.startIndex, pair.close.endIndex);
+                    pair.id = i;
+                    return pair
+            });
+
+            const sortTag = (a, b) => {
+                if (a.open.startIndex >= b.open.startIndex && a.close.endIndex <= b.close.endIndex) {
+                    return 1
+                } else {
+                    return -1
+                }
+            }
+
+            const sortedTagPairs = tagPairs.sort(sortTag);
+            const usedIndexes = {};
+            let buildTree = (parent) => {
+                const tagTree = [];
+                if (!parent) {
+                    parent = sortedTagPairs.find(pair => !usedIndexes[pair.id]);
+                    if (!parent) return tagTree;
+                    usedIndexes[parent.id] = true;
+                }
+                const parentTagName = parent.open.name;
+                const isComponent = !this.validHTMLElements.includes(parentTagName);
+                const attributes = {};
+                const children = [];
+                const attributeMatch = parent.string.slice(0, parent.open.endIndex - parent.open.startIndex).matchAll(this.regex.attribute);
                 for(const entry of attributeMatch){
                     const { attribute, value } = entry.groups;
                     attributes[attribute] = value ? value : true;
                 }
-                let stripedElementString = string.replace(this.regex[selfClosingTag ? 'selfClosingTag' : 'openingTag'], '');
-                if (!selfClosingTag) {
-                    const closingTags = stripedElementString.match(this.regex.closingTag);
-                    if (closingTags) {
-                        stripedElementString = stripedElementString.replace(closingTags[closingTags.length -1], '');
-                    }
+                let textContentString = currentString.slice(parent.open.endIndex, parent.close.startIndex)
+                textContentString = textContentString.replace(this.regex.element, '');
+                if (textContentString.length && !textContentString.match(/^\s+$/g)) {
+                    children.push(textContentString);
                 }
-                if (stripedElementString.match(this.regex.element) !== null) {
-                    children.push(stripedElementString.replace(this.regex.element, ''));
-                    children.push(...detectElement(stripedElementString));
-                } else {
-                    children = [stripedElementString];
+                
+                tagTree.push({...parent,  attributes, children, isComponent});
+                if (parent.open.type === 'selfClose') {
+                    return tagTree;
                 }
-                children = children.filter(el => {
-                    if (typeof el === 'string' && el.match(/^\s*$/)) {
-                        return false
-                    }
-                    return true
-                })
-                detectedElements.push({tagName, attributes, children, tagProps});
+                let directChildren = sortedTagPairs.filter(pair => !usedIndexes[pair.id] && pair.open.startIndex >= parent.open.startIndex && pair.close.endIndex <= parent.close.endIndex).sort(sortTag);
+                if (!directChildren.length) {
+                    return tagTree;
+                }
+                while(Object.keys(usedIndexes).length < sortedTagPairs.length) {
+                    let child = directChildren.find(pair => !usedIndexes[pair.id]);
+                    usedIndexes[child.id] = true
+                    if (!child) return tagTree;
+                    child = buildTree(child);
+                    tagTree[tagTree.length - 1].children.push(...child);
+                }
+                return tagTree;
             }
-            return detectedElements;
+            while(Object.keys(usedIndexes).length < sortedTagPairs.length) {
+                tagTree.unshift(...buildTree());
+            }
+            let surroundText = [];
+            let prevTagEndIndex = 0;
+            tagTree.forEach((parentTag, i) => {
+                let text = currentString.slice(prevTagEndIndex, parentTag.open.startIndex);
+                prevTagEndIndex = parentTag.close.endIndex
+                if (text.length && !/^\s+$/g.test(text)) {
+                    surroundText.push({text, treeIndex: i})
+                }
+                if (i === tagTree.length - 1) {
+                let postText = currentString.slice(parentTag.close.endIndex);
+                if (postText.length && !/^\s+$/g.test(postText)) {
+                    surroundText.push({text: postText, treeIndex: tagTree.length})
+                }
+                }
+            })
+            let counter = 0;
+            surroundText.forEach(entry => {
+                tagTree.splice(entry.treeIndex + counter, 0, entry.text);
+                counter++;
+            })
+            console.log(tagTree);
+            return tagTree
         })
-        let detectedElements = detectElement(linkedString);
+        let detectedElements = tagTree(linkedString);
         return detectedElements;
     }
 
@@ -91,11 +163,12 @@ export default class SML {
         smlElements.forEach(smlElement => {
             if (typeof smlElement === 'string') {
                 const textNode = document.createTextNode(smlElement);
-                elementParent.appendChild(textNode);
+                fragment.appendChild(textNode);
                 return;
             }
-            const { tagName, attributes, children, tagProps } = smlElement;
-            if(tagProps.isComponent) {
+            const tagName = smlElement.open.name;
+            const { children, attributes, isComponent } = smlElement;
+            if(isComponent) {
                 let componentFragment = document.createDocumentFragment();
                 const component = this.components.find(entry => entry.name === tagName);
                 if (component) {

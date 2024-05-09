@@ -21,20 +21,23 @@ class App extends SMLComponent {
 
     render() {
         return `
-        <h1 class="title">Fries calculator</h1>
+        gaga
+        <h1 id="1" class="title">Fries calculator
+        <h1 id="3">This is a child
+        </h1>
         <main>
         <Input />
+        <h1 id="3"></h1>
         </main>
+        </h1>
+        <section></section>
+        baba
         `
     }
 
 }
 sml.loadComponents(Input);
 sml.entry(App);
-
-
-
-
 
 /**
  * <!-- 

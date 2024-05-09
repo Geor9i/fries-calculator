@@ -1,8 +1,10 @@
 export const patterns = {
     whitespace: /\s/,
     element: /<(?<tagName>\w+)[^<>]*[\/\s]?>[\s\S]*?<\/\k<tagName>>|<(?<tagname>\w+)[^<>\/]*[\/\s]?>/g,
-    openingTag: /<(?<tagName>\w+)[^<>]*?>/,
-    closingTag: /<\/(?<tagName>\w+)\s*>/g,
+    text: /[^<>]/g,
+    tag: /<\/?(?<tagName>\w+)[^<>]*?>/g,
+    openingTag: /<(?<tagName>\w+)[^<>\/]*?>/,
+    closingTag: /<\/(?<tagName>\w+)\s*>/,
     selfClosingTag: /<(?<tagName>\w+)[^<>]*[\/\s]?>/,
     commentTag: /<!--.+?-->/g,
     attribute: /\s+(?<attribute>[-@%&$£*#a-z]+)(?:\s*="(?<value>[^"]*)")?/g
