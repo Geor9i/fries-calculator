@@ -1,5 +1,6 @@
 import DependencyHub from "../dependencyResolvers/dependencyHub.js";
 import { patterns, selfClosingTags, validHTMLElements } from "./constants/constants.js";
+import HTMLInterpreters from "./utils/HTMLInterpreters.js";
 
 export default class SML {
 
@@ -8,9 +9,10 @@ export default class SML {
     constructor() {
         this.root = null;
         this.selfClosingTags = selfClosingTags;
-        this.regex = patterns;
         this.validHTMLElements = validHTMLElements;
+        this.regex = patterns;
         this.components = null;
+        this.htmlUtil = new HTMLInterpreters();
     }
     setRoot(rootElement) {
         if (rootElement instanceof HTMLElement) {
@@ -21,6 +23,7 @@ export default class SML {
     m(stringsArr, ...values) {
         const placeHolders = [];
         let linkedString = ``;
+        // Recombine html string parts
         stringsArr.forEach((str, i) => {
             linkedString += str;
             const value = values[i];
@@ -30,29 +33,16 @@ export default class SML {
                 placeHolders.push({index: linkedString.length, value})
             }
         })
-
+        // if the string contains no html return the text 
         if (!this.regex.element.test(linkedString) && linkedString.length && !/^\s+$/g.test(linkedString)) {
             return [linkedString];
         }
 
         const tagTree = (currentString => {
             const tagTree = [];
-            const availableTags = [];
-            const tagTypes = {
-                open: this.regex.openingTag,
-                selfClose: this.regex.selfClosingTag,
-                close: this.regex.closingTag,
-            }
-            console.log(currentString);
-            const tagCollection = currentString.matchAll(this.regex.tag);
-            for(let tagMatch of tagCollection) {
-                const name = tagMatch.groups.tagName;
-                let type = Object.keys(tagTypes).find(expr => tagTypes[expr].test(tagMatch[0]));
-                const startIndex = tagMatch.index;
-                const endIndex = startIndex + tagMatch[0].length;
-                availableTags.push({name, type, startIndex: startIndex ,endIndex: endIndex});
-            }
+            const availableTags = this.htmlUtil.findTags(currentString);
             const tagPairs = [];
+            // Attempt to find all tag pairs
            while(availableTags.length) {
                 let openTag = availableTags.shift();
                 const { name, type } = openTag;
@@ -121,8 +111,8 @@ export default class SML {
                 }
                 while(Object.keys(usedIndexes).length < sortedTagPairs.length) {
                     let child = directChildren.find(pair => !usedIndexes[pair.id]);
-                    usedIndexes[child.id] = true
                     if (!child) return tagTree;
+                    usedIndexes[child.id] = true
                     child = buildTree(child);
                     tagTree[tagTree.length - 1].children.push(...child);
                 }

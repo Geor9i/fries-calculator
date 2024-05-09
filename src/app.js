@@ -21,17 +21,13 @@ class App extends SMLComponent {
 
     render() {
         return `
-        gaga
-        <h1 id="1" class="title">Fries calculator
-        <h1 id="3">This is a child
-        </h1>
-        <main>
-        <Input />
-        <h1 id="3"></h1>
-        </main>
-        </h1>
-        <section></section>
-        baba
+        <div class="input">
+                <div title="Theoretical usage from inventory activity" class="form-group">
+                    <div class="unit" data-id="kg" data-unit="format">
+                        <input value="521.93" name="theoreticalUsage" type="text" id="theoretical-usage-kg">
+                    </div>
+                </div>
+    </div>
         `
     }
 
