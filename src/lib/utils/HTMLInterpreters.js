@@ -81,13 +81,13 @@ export default class HTMLInterpreters {
         }
     }
 
-    buildTree(tagPairs, htmlString) {
+    buildTree(sortedTagPairs, htmlString) {
         const tagTree = [];
         const usedIndexes = {};
         let buildTree = (parent) => {
                 let tagTree = [];
                 if (!parent) {
-                    parent = tagPairs.find(pair => !usedIndexes[pair.id]);
+                    parent = sortedTagPairs.find(pair => !usedIndexes[pair.id]);
                     if (!parent) return tagTree;
                     usedIndexes[parent.id] = true;
                 }
@@ -100,36 +100,47 @@ export default class HTMLInterpreters {
                     const { attribute, value } = entry.groups;
                     attributes[attribute] = value ? value : true;
                 }
-                let textContentString = htmlString.slice(parent.open.endIndex, parent.close.startIndex);
-                console.log('textContentString: ', textContentString);
-                textContentString = textContentString.replace(this.regex.element, '');
-                if (textContentString.length && !textContentString.match(/^\s+$/g)) {
-                    children.push(textContentString);
+                
+                if (parent.open.type === 'selfClose') {
+                    tagTree.push({...parent,  attributes, children, isComponent});
+                    return tagTree; 
                 }
+                let directChildren = sortedTagPairs.filter(pair => !usedIndexes[pair.id] && pair.open.startIndex >= parent.open.startIndex && pair.close.endIndex <= parent.close.endIndex).sort(this.sortTagPair);
+                let childrenCount = directChildren.length;
+                let sliceStartIndex = parent.open.endIndex;
+                while(childrenCount > 0) {
+                    let child = directChildren.find(pair => !usedIndexes[pair.id]);
+                    if (!child) break;
+                    usedIndexes[child.id] = true;
+                    child = buildTree(child);
+                    let text = htmlString.slice(sliceStartIndex, child[0].open.startIndex);
+                    sliceStartIndex = child[0].close.endIndex;
+                    if (text.length && !/^\s+$/g.test(text)) {
+                        children.push(text)
+                    }
+                    children.push(...child);
+                    if (childrenCount === 1) {
+                    let endText = htmlString.slice(sliceStartIndex, parent.close.startIndex);
+                    if (endText.length && !/^\s+$/g.test(endText)) {
+                        children.push(endText)
+                    }
+                    }
+                    childrenCount = directChildren.filter(pair => !usedIndexes[pair.id]).length;
+                }
+
+                if (!directChildren.length) {
+                    let text = htmlString.slice(parent.open.endIndex, parent.close.startIndex);
+                    if (text.length && !/^\s+$/g.test(text)) {
+                        children.push(text)
+                    }
+                }
+
                 
                 tagTree.push({...parent,  attributes, children, isComponent});
-                if (parent.open.type === 'selfClose') {
-                    return tagTree;
-                }
-                let directChildren = tagPairs.filter(pair => !usedIndexes[pair.id] && pair.open.startIndex >= parent.open.startIndex && pair.close.endIndex <= parent.close.endIndex).sort(this.sortTagPair);
-                if (!directChildren.length) {
-                    return tagTree;
-                }
-                while(Object.keys(usedIndexes).length < tagPairs.length) {
-                    let child = directChildren.find(pair => !usedIndexes[pair.id]);
-                    if (!child) return tagTree;
-                    usedIndexes[child.id] = true
-                    child = buildTree(child);
-                    tagTree[tagTree.length - 1].children.push(...child);
-                }
-
-                tagTree = this.insertTagTreeSurroundText(tagTree, htmlString);
-                console.log(tagTree);
-
                 return tagTree;
             }
 
-            while(Object.keys(usedIndexes).length < tagPairs.length) {
+            while(Object.keys(usedIndexes).length < sortedTagPairs.length) {
                 tagTree.unshift(...buildTree());
             }
             return tagTree;

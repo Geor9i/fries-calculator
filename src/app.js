@@ -21,13 +21,16 @@ class App extends SMLComponent {
 
     render() {
         return `
+        pe6o
         <div class="input">
-                <div>
-                    <div >
-                        <input>
-                    </div>
-                </div>
-    </div>
+        baba
+        <section></section>
+            Kaka
+            keke
+            <div>ketchup</div>
+            ciganin
+        </div>
+        dqdo
         `
     }
 
