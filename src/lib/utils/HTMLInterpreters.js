@@ -40,8 +40,9 @@ export default class HTMLInterpreters {
         const allTags = unpairedTags.map((tag, i) => ({...tag, id: i}));
         let tagPairs = [];
         const usedIndexes = {};
+        let remainingTagCount = allTags.length;
         // Attempt to find all tag pairs
-       while(allTags.length !== usedIndexes.length) {
+       while(remainingTagCount > 0) {
             let currentTag = allTags.find((tag) => !usedIndexes[tag.id]);
             if (!currentTag) break;
             usedIndexes[currentTag.id] = true;
@@ -53,6 +54,7 @@ export default class HTMLInterpreters {
                     if (tag.type === 'close' && opentags <= 0) {
                         tagPairs.push({open: currentTag, close: tag});
                         usedIndexes[tag.id] = true;
+                        remainingTagCount--;
                         break;
                     } else if (tag.type === 'close' && opentags > 0) {
                         opentags--;
@@ -61,8 +63,9 @@ export default class HTMLInterpreters {
                     }
                 }
             } else if (type === 'selfClose') {
-                tagPairs.push({open: currentTag, close: currentTag})
+                tagPairs.push({open: currentTag, close: currentTag});
             }
+            remainingTagCount--;
         }
         tagPairs = tagPairs.map((pair, i) => {
                 pair.string = htmlString.slice(pair.open.startIndex, pair.close.endIndex);
@@ -74,10 +77,10 @@ export default class HTMLInterpreters {
     }
 
     sortTagPair(a, b) {
-        if (a.open.startIndex >= b.open.startIndex && a.close.endIndex <= b.close.endIndex) {
-            return 1
-        } else {
+        if (a.open.startIndex <= b.open.startIndex && a.close.endIndex >= b.close.endIndex) {
             return -1
+        } else {
+            return 1
         }
     }
 
@@ -105,7 +108,8 @@ export default class HTMLInterpreters {
                     tagTree.push({...parent,  attributes, children, isComponent});
                     return tagTree; 
                 }
-                let directChildren = sortedTagPairs.filter(pair => !usedIndexes[pair.id] && pair.open.startIndex >= parent.open.startIndex && pair.close.endIndex <= parent.close.endIndex).sort(this.sortTagPair);
+                console.log(htmlString.length);
+                let directChildren = sortedTagPairs.filter(pair => !usedIndexes[pair.id] && pair.open.startIndex >= parent.open.startIndex && pair.close.endIndex <= parent.close.endIndex).sort(this.sortTagPair);'        '
                 let childrenCount = directChildren.length;
                 let sliceStartIndex = parent.open.endIndex;
                 while(childrenCount > 0) {
