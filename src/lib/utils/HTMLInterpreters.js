@@ -145,7 +145,7 @@ export default class HTMLInterpreters {
             }
 
             while(Object.keys(usedIndexes).length < sortedTagPairs.length) {
-                tagTree.unshift(...buildTree());
+                tagTree.push(...buildTree());
             }
             return tagTree;
 

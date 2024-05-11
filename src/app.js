@@ -19,8 +19,10 @@ const sml = DependencyHub.provide(SML);
 class App extends SMLComponent {
   render() {
     return `
-       <main>
-       <div class="input">
+    <h1 class="title">Fries calculator</h1>
+    <main>
+
+        <div class="input">
             <p class="title">Input</p>
             <form>
                 <div class="reset-container">
@@ -93,7 +95,175 @@ class App extends SMLComponent {
         </div>
 
 
-       </main>
+        <div class="output">
+            <p class="title">Results</p>
+            <form>
+                <fieldset class="product-values">
+                        <legend>Actual Usage</legend>
+                    <div title="Calculated actual usage of fries" class="form-group">
+                        <p class="output-heading">Frozen Fries</p>
+                        <div class="unit" data-id="kg" data-unit="format">
+                            <input name="actualUsage" disabled type="text">
+                        </div>
+                    </div>
+                    <div title="Calculated actual total fries usage in KG" class="form-group">
+                        <p class="output-heading">Price</p>
+                        <div class="unit" data-id="£">
+                            <input name="actualPrice" disabled type="text">
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="product-values">
+                    <legend>Theoretical Usage</legend>
+                    <div title="Calculated theo total fries usage in KG" class="form-group">
+                        <p class="output-heading">Frozen Fries</p>
+                        <div class="unit" data-id="box" data-unit="format">
+                            <input name="theoreticalUsage" disabled type="text">
+                        </div>
+                    </div>
+                    <div title="Calculated actual total fries usage in KG" class="form-group">
+                        <p class="output-heading">Price</p>
+                        <div class="unit" data-id="£">
+                            <input name="theoreticalPrice" disabled type="text">
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="packaging-amounts">
+                    <legend>Portions</legend>
+                    <div title="Calculated actual fries usage from fries bags" class="form-group">
+                        <p class="output-heading">Fries Bag</p>
+                        <div class="unit" data-id="ea" data-unit="mult">
+                            <input name="friesBags" disabled type="text">
+                        </div>
+                    </div>
+                    <div title="Calculated actual fries usage from fries clamshells" class="form-group">
+                        <p class="output-heading">Fries Clamshell</p>
+                        <div class="unit" data-id="ea" data-unit="mult">
+                            <input name="friesClamshell" disabled type="text">
+                        </div>
+                    </div>
+                    <div title="Calculated actual fries usage from snackboxes" class="form-group">
+                        <p class="output-heading">Snackbox</p>
+                        <div class="unit" data-id="ea" data-unit="mult">
+                            <input name="snackbox" disabled type="text">
+                        </div>
+                    </div>
+                    <div title="Calculated actual fries usage from fries scoops" class="form-group">
+                        <p class="output-heading">Fries Scoop</p>
+                        <div class="unit" data-id="ea" data-unit="mult">
+                            <input name="friesScoop" disabled type="text">
+                        </div>
+                    </div>
+                    <div title="Calculated actual fries usage from megaboxes" class="form-group">
+                        <p class="output-heading">Megabox</p>
+                        <div class="unit" data-id="ea" data-unit="mult">
+                            <input name="megabox" disabled type="text">
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </main>
+
+    <div title="Toggle options menu" class="options-button-container">
+        <svg class="options-button">
+            <use xlink:href="./svg/sprite.svg#arrow_down"></use>
+        </svg>
+    </div>
+
+    
+    <section id="options" class="options">
+        <p class="title">Options</p>
+        <form>
+            <fieldset class="product-values">
+                <legend>Prices</legend>
+                <div title="Price of box of fries" class="form-group">
+                    <p class="output-heading">Fries Box Price</p>
+                    <div class="unit" data-id="£">
+                        <input name="friesBoxFrozen" type="text">
+                    </div>
+                </div>
+                <div title="Price of regular portion of fries" class="form-group">
+                    <p class="output-heading">RG Fries</p>
+                    <div class="unit" data-id="£">
+                        <input name="friesBag" type="text">
+                    </div>
+                </div>
+                <div title="Price of large portion of fries" class="form-group">
+                    <p class="output-heading">LG Fries</p>
+                    <div class="unit" data-id="£">
+                        <input name="friesScoop" type="text">
+                    </div>
+                </div>
+                <div title="Price of large portion of fries" class="form-group">
+                    <p class="output-heading">Snackbox</p>
+                    <div class="unit" data-id="£">
+                        <input name="snackbox" type="text">
+                    </div>
+                </div>
+                <div title="Price of large portion of fries" class="form-group">
+                    <p class="output-heading">Megabox</p>
+                    <div class="unit" data-id="£">
+                        <input name="megabox" type="text">
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="product-values">
+                <legend>Cooked Portion Sizes</legend>
+                <div title="Cooked Portion size for rg bag of fries" class="form-group">
+                    <p class="output-heading"> RG Fries Bag</p>
+                    <div class="unit" data-id="kg" data-unit="weight">
+                        <input name="friesBag" type="text">
+                    </div>
+                </div>
+                <div title="Cooked Portion size for lg scoop of fries" class="form-group">
+                    <p class="output-heading">LG Fries Scoop</p>
+                    <div class="unit" data-id="kg" data-unit="weight">
+                        <input name="friesScoop" type="text">
+                    </div>
+                </div>
+                <div title="Cooked Portion size for rg bag of fries" class="form-group">
+                    <p class="output-heading">Snackbox</p>
+                    <div class="unit" data-id="kg" data-unit="weight">
+                        <input name="snackbox" type="text">
+                    </div>
+                </div>
+                <div title="Cooked Portion size for rg bag of fries" class="form-group">
+                    <p class="output-heading">Megabox</p>
+                    <div class="unit" data-id="kg" data-unit="weight">
+                        <input name="megabox" type="text">
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="product-values">
+                <legend>Frozen Portion Sizes</legend>
+                <div title="Frozen Portion size for rg bag of fries" class="form-group">
+                    <p class="output-heading"> RG Fries Bag</p>
+                    <div class="unit" data-id="kg" data-unit="weight">
+                        <input name="friesBag" type="text">
+                    </div>
+                </div>
+                <div title="Frozen Portion size for lg scoop of fries" class="form-group">
+                    <p class="output-heading">LG Fries Scoop</p>
+                    <div class="unit" data-id="kg" data-unit="weight">
+                        <input name="friesScoop" type="text">
+                    </div>
+                </div>
+                <div title="Frozen Portion size for rg bag of fries" class="form-group">
+                    <p class="output-heading">Snackbox</p>
+                    <div class="unit" data-id="kg" data-unit="weight">
+                        <input name="snackbox" type="text">
+                    </div>
+                </div>
+                <div title="Frozen Portion size for rg bag of fries" class="form-group">
+                    <p class="output-heading">Megabox</p>
+                    <div class="unit" data-id="kg" data-unit="weight">
+                        <input name="megabox" type="text">
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </section> -->
         `;
   }
 }
