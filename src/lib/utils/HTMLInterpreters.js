@@ -85,7 +85,7 @@ export default class HTMLInterpreters {
         const tagTree = [];
         const usedIndexes = {};
         let buildTree = (parent) => {
-                const tagTree = [];
+                let tagTree = [];
                 if (!parent) {
                     parent = tagPairs.find(pair => !usedIndexes[pair.id]);
                     if (!parent) return tagTree;
@@ -100,7 +100,8 @@ export default class HTMLInterpreters {
                     const { attribute, value } = entry.groups;
                     attributes[attribute] = value ? value : true;
                 }
-                let textContentString = htmlString.slice(parent.open.endIndex, parent.close.startIndex)
+                let textContentString = htmlString.slice(parent.open.endIndex, parent.close.startIndex);
+                console.log('textContentString: ', textContentString);
                 textContentString = textContentString.replace(this.regex.element, '');
                 if (textContentString.length && !textContentString.match(/^\s+$/g)) {
                     children.push(textContentString);
@@ -121,6 +122,10 @@ export default class HTMLInterpreters {
                     child = buildTree(child);
                     tagTree[tagTree.length - 1].children.push(...child);
                 }
+
+                tagTree = this.insertTagTreeSurroundText(tagTree, htmlString);
+                console.log(tagTree);
+
                 return tagTree;
             }
 
@@ -131,7 +136,7 @@ export default class HTMLInterpreters {
 
     }
 
-    extractTagTreeSurroundText(tagTree, currentString) {
+    insertTagTreeSurroundText(tagTree, currentString) {
         let surroundText = [];
         let prevTagEndIndex = 0;
         tagTree.forEach((parentTag, i) => {

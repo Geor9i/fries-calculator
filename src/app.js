@@ -22,9 +22,9 @@ class App extends SMLComponent {
     render() {
         return `
         <div class="input">
-                <div title="Theoretical usage from inventory activity" class="form-group">
-                    <div class="unit" data-id="kg" data-unit="format">
-                        <input value="521.93" name="theoreticalUsage" type="text" id="theoretical-usage-kg">
+                <div>
+                    <div >
+                        <input>
                     </div>
                 </div>
     </div>

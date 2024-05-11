@@ -22,32 +22,28 @@ export default class SML {
 
     m(stringsArr, ...values) {
         const placeHolders = [];
-        let linkedString = ``;
+        let htmlString = ``;
         // Recombine html string parts
         stringsArr.forEach((str, i) => {
-            linkedString += str;
+            htmlString += str;
             const value = values[i];
             if (value && typeof value === 'string') {
-                linkedString += value;
+                htmlString += value;
             } else if (value) {
-                placeHolders.push({index: linkedString.length, value})
+                placeHolders.push({index: htmlString.length, value})
             }
         })
         // if the string contains no html return the text 
-        if (!this.regex.element.test(linkedString) && linkedString.length && !/^\s+$/g.test(linkedString)) {
-            return [linkedString];
+        if (!this.regex.element.test(htmlString) && htmlString.length && !/^\s+$/g.test(htmlString)) {
+            return [htmlString];
         }
 
-        const tagTree = (currentString => {
-            const availableTags = this.htmlUtil.findTags(currentString);
-            const tagPairs = this.htmlUtil.pairTags(availableTags, currentString);
-            console.log(tagPairs);
-            let tagTree = this.htmlUtil.buildTree(tagPairs, currentString);
-            tagTree = this.htmlUtil.extractTagTreeSurroundText(tagTree, currentString)
-            return tagTree
-        })
-        let detectedElements = tagTree(linkedString);
-        return detectedElements;
+        const availableTags = this.htmlUtil.findTags(htmlString);
+        const tagPairs = this.htmlUtil.pairTags(availableTags, htmlString);
+        let tagTree = this.htmlUtil.buildTree(tagPairs, htmlString);
+        tagTree = this.htmlUtil.insertTagTreeSurroundText(tagTree, htmlString);
+        console.log(tagTree);
+        return tagTree
     }
 
     display(elementParent, ...smlElements) {
