@@ -108,7 +108,6 @@ export default class HTMLInterpreters {
                     tagTree.push({...parent,  attributes, children, isComponent});
                     return tagTree; 
                 }
-                console.log(htmlString.length);
                 let directChildren = sortedTagPairs.filter(pair => !usedIndexes[pair.id] && pair.open.startIndex >= parent.open.startIndex && pair.close.endIndex <= parent.close.endIndex).sort(this.sortTagPair);'        '
                 let childrenCount = directChildren.length;
                 let sliceStartIndex = parent.open.endIndex;
