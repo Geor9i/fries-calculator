@@ -14,11 +14,25 @@ export default class HTMLInterpreters {
             selfClose: this.regex.selfClosingTag,
             close: this.regex.closingTag,
         }
-        let type = Object.keys(tagTypes).find(expr => tagTypes[expr].test(tagString));
-        if (type === 'open' && this.selfClosingTags.includes(tagName)) {
-            type = 'selfClose'
+        let typeObj = Object.keys(tagTypes).reduce((obj, expr) => {
+            obj[expr] = tagTypes[expr].test(tagString);
+            return obj;
+        }, {});
+        const passCount = Object.keys(typeObj).filter(result => typeObj[result]).length;
+        let type;
+        if (passCount === 1) {
+            type = Object.keys(typeObj).find(test => typeObj[test]);
+            if (type === 'open' && this.selfClosingTags.includes(tagName)) {
+                type = 'selfClose'
+            }
+        } else {
+            if (typeObj.open && typeObj.selfClose) {
+                type = 'selfClose';
+            }
         }
+        
         return type;
+        
     }
 
     findTags(string) {
@@ -84,9 +98,10 @@ export default class HTMLInterpreters {
         }
     }
 
-    buildTree(sortedTagPairs, htmlString) {
+    buildTree(sortedTagPairs, htmlString, placeHolders) {
         const tagTree = [];
         const usedIndexes = {};
+        console.log(placeHolders);
         let buildTree = (parent) => {
                 let tagTree = [];
                 if (!parent) {
@@ -98,10 +113,13 @@ export default class HTMLInterpreters {
                 const isComponent = !this.validHTMLElements.includes(parentTagName);
                 const attributes = {};
                 const children = [];
+                const tagProps = placeHolders.filter(entry => parent.open.startIndex <= entry.index && parent.close.endIndex >= entry.index);
                 const attributeMatch = parent.string.slice(0, parent.open.endIndex - parent.open.startIndex).matchAll(this.regex.attribute);
+                // map tag attributes
                 for(const entry of attributeMatch){
-                    const { attribute, value } = entry.groups;
-                    attributes[attribute] = value ? value : true;
+                    let { attribute, value } = entry.groups;
+                    value = value === undefined ? true : value;
+                    attributes[attribute] = value;
                 }
                 
                 if (parent.open.type === 'selfClose') {

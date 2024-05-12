@@ -1,4 +1,3 @@
-import DependencyHub from "../dependencyResolvers/dependencyHub.js";
 import {
   patterns,
   selfClosingTags,
@@ -10,7 +9,6 @@ export default class SML {
   static dependencies = ["ObjectUtil"];
 
   constructor() {
-    this.root = null;
     this.selfClosingTags = selfClosingTags;
     this.validHTMLElements = validHTMLElements;
     this.regex = patterns;
@@ -24,7 +22,6 @@ export default class SML {
   }
 
   smlTree({htmlString, placeHolders}) { 
-   
     // if the string contains no html return the text
     if (
       !this.regex.element.test(htmlString) &&
@@ -36,7 +33,7 @@ export default class SML {
 
     const availableTags = this.htmlUtil.findTags(htmlString);
     const tagPairs = this.htmlUtil.pairTags(availableTags, htmlString);
-    let tagTree = this.htmlUtil.buildTree(tagPairs, htmlString);
+    let tagTree = this.htmlUtil.buildTree(tagPairs, htmlString, placeHolders);
     tagTree = this.htmlUtil.insertTagTreeSurroundText(tagTree, htmlString);
     console.log(tagTree);
     return tagTree;
@@ -69,7 +66,11 @@ export default class SML {
       }
       const element = document.createElement(tagName);
       for (let attribute in attributes) {
-        element.setAttribute(attribute, attributes[attribute]);
+        if (attributes[attribute] === true) {
+          element.setAttribute(attribute, '');
+        } else {
+          element.setAttribute(attribute, attributes[attribute]);
+        }
       }
       if (!this.selfClosingTags.includes(tagName) && children.length) {
         this.display(element, ...children);
@@ -79,22 +80,6 @@ export default class SML {
     elementParent.appendChild(fragment);
   }
 
-  entry(appComnponent) {
-    const app = new appComnponent();
-    const domMap = this.smlTree(app.render());
-    this.display(this.root, ...domMap);
-  }
 
-  loadComponents(...components) {
-    this.components = components.map((component) => ({
-      name: component.name,
-      component,
-    }));
-  }
-
-  reader(string) {
-    
-  }
+  
 }
-
-DependencyHub.add(SML);

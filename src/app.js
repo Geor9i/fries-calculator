@@ -6,12 +6,10 @@ import EventBus from "./utils/evenBus.js";
 import Options from "./components/options.js";
 import ResultsDisplay from "./components/results.js";
 import DependencyHub from "./dependencyResolvers/dependencyHub.js";
-import "./app.config.js";
 import SMLComponent from "./lib/smlComponent.js";
 import SML from "./lib/sml.js";
 import Input from "./components/Input.js";
 
-const sml = DependencyHub.provide(SML);
 // const options = DependencyHub.provide(Options);
 // const friesCalculator = DependencyHub.provide(FriesCalculator);
 // const resultsDisplay = DependencyHub.provide(ResultsDisplay);
@@ -19,17 +17,20 @@ const sml = DependencyHub.provide(SML);
 class App extends SMLComponent {
   render() {
 
+    const text = 'This is some text';
+    const getClass = () => 'red';
+
     return this.m`
     <h1 class="title">Fries calculator</h1>
-    <Input >
-    keke
-    <div></div>
-    </Input>
+    <p class=${getClass}>${text}</p>
+    <Input />
     `;
   }
 }
-sml.loadComponents(Input);
-sml.entry(App);
+
+const app = new App();
+app.loadComponents(Input);
+app.entry(document.querySelector('.root'));
 
 /**
  * <!-- 
