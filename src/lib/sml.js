@@ -23,19 +23,8 @@ export default class SML {
     }
   }
 
-  m(stringsArr, ...values) { 
-    const placeHolders = [];
-    let htmlString = ``;
-    // Recombine html string parts
-    stringsArr.forEach((str, i) => {
-      htmlString += str;
-      const value = values[i];
-      if (value && typeof value === "string") {
-        htmlString += value;
-      } else if (value) {
-        placeHolders.push({ index: htmlString.length, value });
-      }
-    });
+  smlTree({htmlString, placeHolders}) { 
+   
     // if the string contains no html return the text
     if (
       !this.regex.element.test(htmlString) &&
@@ -72,7 +61,7 @@ export default class SML {
           const instance = new component.component(attributes);
           instance.children = children;
           instance.attributes = attributes;
-          const domMap = this.m`${instance.render()}`;
+          const domMap = this.smlTree(instance.render());
           this.display(componentFragment, ...domMap);
           fragment.appendChild(componentFragment);
         }
@@ -92,7 +81,7 @@ export default class SML {
 
   entry(appComnponent) {
     const app = new appComnponent();
-    const domMap = this.m`${app.render()}`;
+    const domMap = this.smlTree(app.render());
     this.display(this.root, ...domMap);
   }
 
@@ -101,6 +90,10 @@ export default class SML {
       name: component.name,
       component,
     }));
+  }
+
+  reader(string) {
+    
   }
 }
 

@@ -6,7 +6,15 @@ export default class Input extends SMLComponent {
     }
 
     render() {
-        console.log(this.children);
-        return `<header>gag</header>`
+        const title = 'This is a title';
+        const p = 'This is a paragraph';
+        const four = 4;
+
+        return this.m `
+        <section>
+        <h1>${ title }</h1>
+        <p>${ p }</p>
+        <div class="${four}"></div>
+        </section>`
     }
 }

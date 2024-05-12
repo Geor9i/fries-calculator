@@ -19,14 +19,13 @@ const sml = DependencyHub.provide(SML);
 class App extends SMLComponent {
   render() {
 
-    return `
+    return this.m`
     <h1 class="title">Fries calculator</h1>
     <Input >
     keke
     <div></div>
     </Input>
-
-        `;
+    `;
   }
 }
 sml.loadComponents(Input);
