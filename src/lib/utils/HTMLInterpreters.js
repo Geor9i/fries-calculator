@@ -2,10 +2,11 @@ import { patterns, selfClosingTags, validHTMLElements } from "../constants/const
 
 export default class HTMLInterpreters {
 
-    constructor () {
+    constructor (components) {
         this.selfClosingTags = selfClosingTags;
         this.validHTMLElements = validHTMLElements;
         this.regex = patterns;
+        this.components = components;
     }
 
     getStringTagType(tagString, tagName) {
@@ -100,6 +101,7 @@ export default class HTMLInterpreters {
 
     buildTree(sortedTagPairs, htmlString, placeHolders) {
         const tagTree = [];
+        console.log(this.components);
         const usedIndexes = {};
         console.log(placeHolders);
         let buildTree = (parent) => {

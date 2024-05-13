@@ -17,6 +17,8 @@ export default class Input extends SMLComponent {
         <h1>${ title }</h1>
         <p>${ p }</p>
         <input ${variable}=${red} >
+
+        
         </section>`
     }
 }

@@ -11,14 +11,8 @@ class SML {
     this.selfClosingTags = selfClosingTags;
     this.regex = patterns;
     this.components = null;
-    this.htmlUtil = new HTMLInterpreters();
+    this.htmlUtil = new HTMLInterpreters(this.componentClasses);
   }
-  setRoot(rootElement) {
-    if (rootElement instanceof HTMLElement) {
-      this.root = rootElement;
-    }
-  }
-
   smlTree({htmlString, placeHolders}) { 
     // if the string contains no html return the text
     if (
@@ -33,13 +27,12 @@ class SML {
     const tagPairs = this.htmlUtil.pairTags(availableTags, htmlString);
     let tagTree = this.htmlUtil.buildTree(tagPairs, htmlString, placeHolders);
     tagTree = this.htmlUtil.insertTagTreeSurroundText(tagTree, htmlString);
-    console.log(tagTree);
     return tagTree;
   }
 
   display(elementParent, ...smlElements) {
     const fragment = document.createDocumentFragment();
-    smlElements.forEach((smlElement) => {
+    smlElements.forEach((smlElement, elementIndex) => {
       if (typeof smlElement === "string") {
         const textNode = document.createTextNode(smlElement);
         fragment.appendChild(textNode);
@@ -53,14 +46,16 @@ class SML {
           (entry) => entry.name === tagName
         );
         if (component) {
+          console.log(smlElements);
           const instance = new component.component(attributes);
           instance.children = children;
           instance.attributes = attributes;
           const domMap = this.smlTree(instance.render());
+          smlElements[elementIndex].tree = domMap;
           this.display(componentFragment, ...domMap);
           fragment.appendChild(componentFragment);
         }
-        return;
+        return ;
       }
       const element = document.createElement(tagName);
       for (let attribute in attributes) {
@@ -76,6 +71,11 @@ class SML {
       fragment.appendChild(element);
     });
     elementParent.appendChild(fragment);
+  }
+
+
+  get componentClasses() {
+    return this.components;
   }
 
 
