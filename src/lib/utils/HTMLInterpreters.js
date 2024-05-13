@@ -118,31 +118,46 @@ export default class HTMLInterpreters {
 
   stringToTree({ htmlString, placeHolders }) {
     // if the string contains no html return the text
-    if (!this.regex.element.test(htmlString)) {
+    if (!htmlString.match(this.regex.element)) {
         return /^\s+$/g.test(htmlString) ? [] : [htmlString];
     }
     const availableTags = this.findTags(htmlString);
     const tagPairs = this.pairTags(availableTags, htmlString);
     let tagTree = this.buildTree(tagPairs, htmlString, placeHolders);
-    tagTree = this.insertTagTreeSurroundText(tagTree, htmlString);
     return tagTree;
   }
 
+  
   buildTree(sortedTagPairs, htmlString, placeHolders) {
     const tagTree = [];
     const usedIndexes = {};
+    let prevTagEndIndex = 0;
     let buildTreePartial = (parent) => {
       let tagTree = [];
-      let tagNode = {};
+      let postText = null;
       if (!parent) {
         parent = sortedTagPairs.find((pair) => !usedIndexes[pair.id]);
         if (!parent) return tagTree;
         usedIndexes[parent.id] = true;
+        let preText = htmlString.slice(
+          prevTagEndIndex,
+          parent.open.startIndex
+        );
+      prevTagEndIndex = parent.close.endIndex;
+      if (preText.length && !/^\s+$/g.test(preText)) {
+        tagTree.push(preText);
       }
-      const parentTagName = parent.open.name;
-      const isComponent = !this.validHTMLElements.includes(parentTagName);
-      const attributes = {};
-      const children = [];
+      if (Object.keys(usedIndexes).length === sortedTagPairs.length) {
+        postText = htmlString.slice(parent.close.endIndex);
+      }
+
+      }
+      let tagNode = {
+        type: parent.open.name,
+        isComponent: !this.validHTMLElements.includes(parent.open.name),
+        attributes: {},
+        children: [],
+      }
       const tagProps = placeHolders.filter(
         (entry) =>
           parent.open.startIndex <= entry.index &&
@@ -155,7 +170,7 @@ export default class HTMLInterpreters {
       for (const entry of attributeMatch) {
         let { attribute, value } = entry.groups;
         value = value === undefined ? true : value;
-        attributes[attribute] = value;
+        tagNode.attributes[attribute] = value;
       }
 
       if (parent.open.type === "open") {
@@ -174,23 +189,23 @@ export default class HTMLInterpreters {
           let child = directChildren.find((pair) => !usedIndexes[pair.id]);
           if (!child) break;
           usedIndexes[child.id] = true;
-          child = buildTreePartial(child);
+          let childNode = buildTreePartial(child);
           let text = htmlString.slice(
             sliceStartIndex,
-            child[0].open.startIndex
+            child.open.startIndex
           );
-          sliceStartIndex = child[0].close.endIndex;
+          sliceStartIndex = child.close.endIndex;
           if (text.length && !/^\s+$/g.test(text)) {
-            children.push(text);
+            tagNode.children.push(text);
           }
-          children.push(...child);
+          tagNode.children.push(...childNode);
           if (childrenCount === 1) {
             let endText = htmlString.slice(
               sliceStartIndex,
               parent.close.startIndex
             );
             if (endText.length && !/^\s+$/g.test(endText)) {
-              children.push(endText);
+              tagNode.children.push(endText);
             }
           }
           childrenCount = directChildren.filter(
@@ -204,26 +219,29 @@ export default class HTMLInterpreters {
             parent.close.startIndex
           );
           if (text.length && !/^\s+$/g.test(text)) {
-            children.push(text);
+            tagNode.children.push(text);
           }
         }
       }
 
-      tagNode = { ...parent, attributes, children, isComponent };
-
-      if (isComponent) {
+      if (tagNode.isComponent) {
         const storedComponent = this.getComponents().find(
-          (entry) => entry.name === parentTagName
+          (entry) => entry.name === tagNode.type
         );
         if (!storedComponent) {
-          throw new Error(`${parentTagName} is not a known Component!`);
+          throw new Error(`${tagNode.type} is not a known Component!`);
         }
-        const instance = new storedComponent.component(attributes);
-        const tree = this.stringToTree(instance.render());
-        tagNode = { ...tagNode, instance, tree };
+        const instance = new storedComponent.component(tagNode.attributes);
+        instance.tree = this.stringToTree(instance.render());
+        tagNode = { ...tagNode, instance };
       }
 
       tagTree.push(tagNode);
+
+      if (postText && postText.length && !/^\s+$/g.test(postText)) {
+        tagTree.push(postText);
+      }
+
       return tagTree;
     };
 
@@ -233,30 +251,4 @@ export default class HTMLInterpreters {
     return tagTree;
   }
 
-  insertTagTreeSurroundText(tagTree, currentString) {
-    let surroundText = [];
-    let prevTagEndIndex = 0;
-    tagTree.forEach((parentTag, i) => {
-      let text = currentString.slice(
-        prevTagEndIndex,
-        parentTag.open.startIndex
-      );
-      prevTagEndIndex = parentTag.close.endIndex;
-      if (text.length && !/^\s+$/g.test(text)) {
-        surroundText.push({ text, treeIndex: i });
-      }
-      if (i === tagTree.length - 1) {
-        let postText = currentString.slice(parentTag.close.endIndex);
-        if (postText.length && !/^\s+$/g.test(postText)) {
-          surroundText.push({ text: postText, treeIndex: tagTree.length });
-        }
-      }
-    });
-    let counter = 0;
-    surroundText.forEach((entry) => {
-      tagTree.splice(entry.treeIndex + counter, 0, entry.text);
-      counter++;
-    });
-    return tagTree;
-  }
 }

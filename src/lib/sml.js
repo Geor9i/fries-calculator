@@ -23,9 +23,10 @@ class SML {
     const mainFragment = document.createDocumentFragment();
     let nodes = [];
     const treeType = this.objectUtil.typeof(componentTree);
-    const { tree, isComponent } = componentTree;
+    const { isComponent, instance } = componentTree;
     if (treeType === 'object' && isComponent) {
-      nodes = [...tree];
+      console.log(instance);
+      nodes = [...instance.tree];
     } else if(treeType === 'object'){
       nodes = componentTree.children;
     } else {
@@ -37,16 +38,16 @@ class SML {
         mainFragment.appendChild(textNode);
         return;
       }
-      const { children, attributes, isComponent, tree, instance } = smlNode;
+      const { children, attributes, isComponent, instance } = smlNode;
       if (isComponent) {
         let componentFragment = document.createDocumentFragment();
           instance.children = children;
           instance.attributes = attributes;
-          this.buildDom(componentFragment, tree);
+          this.buildDom(componentFragment, instance.tree);
           mainFragment.appendChild(componentFragment);
         return ;
       }
-      const tagName = smlNode.open.name;
+      const tagName = smlNode.type;
       const element = document.createElement(tagName);
       for (let attribute in attributes) {
         if (attributes[attribute] === true) {

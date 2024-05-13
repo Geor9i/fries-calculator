@@ -21,11 +21,18 @@ class App extends SMLComponent {
     const getClass = () => 'red';
 
     return this.m`
+    first
     <h1 class="title">Fries calculator</h1>
+    second
     <p class=${getClass}>${text}</p>
+    third
     <Input>
         <Test />
     </Input>
+    bla
+    <Test />
+    fourth
+
     `;
   }
 }
