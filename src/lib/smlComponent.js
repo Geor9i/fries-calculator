@@ -45,8 +45,10 @@ export default class SMLComponent {
 
   entry(rootElement) {
     this.setRoot(rootElement);
-    const partialAppTree = this.sml.smlTree(this.render());
-    this.sml.display(this.root, ...partialAppTree);
+    const  { htmlString, placeHolders } = this.render();
+    const tree = this.sml.smlTree({ htmlString, placeHolders });
+    const appTree = { isComponent: true, tree, string: htmlString };
+    this.sml.buildDom(this.root, appTree);
   }
 
   loadComponents(...components) {

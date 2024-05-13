@@ -1,3 +1,4 @@
+import ObjectUtil from "../utils/objectUtil.js";
 import {
   patterns,
   selfClosingTags,
@@ -5,58 +6,47 @@ import {
 import HTMLInterpreters from "./utils/HTMLInterpreters.js";
 
 class SML {
-  static dependencies = ["ObjectUtil"];
 
   constructor() {
     this.selfClosingTags = selfClosingTags;
     this.regex = patterns;
     this.components = null;
-    this.htmlUtil = new HTMLInterpreters(this.componentClasses);
+    this.getComponents = this._getComponents.bind(this);
+    this.htmlUtil = new HTMLInterpreters(this.getComponents);
+    this.objectUtil = new ObjectUtil();
   }
   smlTree({htmlString, placeHolders}) { 
-    // if the string contains no html return the text
-    if (
-      !this.regex.element.test(htmlString) &&
-      htmlString.length &&
-      !/^\s+$/g.test(htmlString)
-    ) {
-      return [htmlString];
-    }
-
-    const availableTags = this.htmlUtil.findTags(htmlString);
-    const tagPairs = this.htmlUtil.pairTags(availableTags, htmlString);
-    let tagTree = this.htmlUtil.buildTree(tagPairs, htmlString, placeHolders);
-    tagTree = this.htmlUtil.insertTagTreeSurroundText(tagTree, htmlString);
-    return tagTree;
+    return this.htmlUtil.stringToTree({htmlString, placeHolders});
   }
 
-  display(elementParent, ...smlElements) {
-    const fragment = document.createDocumentFragment();
-    smlElements.forEach((smlElement, elementIndex) => {
-      if (typeof smlElement === "string") {
-        const textNode = document.createTextNode(smlElement);
-        fragment.appendChild(textNode);
+  buildDom(elementParent, componentTree) {
+    const mainFragment = document.createDocumentFragment();
+    let nodes = [];
+    const treeType = this.objectUtil.typeof(componentTree);
+    const { tree, isComponent } = componentTree;
+    if (treeType === 'object' && isComponent) {
+      nodes = [...tree];
+    } else if(treeType === 'object'){
+      nodes = componentTree.children;
+    } else {
+      nodes = [...componentTree];
+    }
+    nodes.forEach((smlNode) => {
+      if (typeof smlNode === "string") {
+        const textNode = document.createTextNode(smlNode);
+        mainFragment.appendChild(textNode);
         return;
       }
-      const tagName = smlElement.open.name;
-      const { children, attributes, isComponent } = smlElement;
+      const { children, attributes, isComponent, tree, instance } = smlNode;
       if (isComponent) {
         let componentFragment = document.createDocumentFragment();
-        const component = this.components.find(
-          (entry) => entry.name === tagName
-        );
-        if (component) {
-          console.log(smlElements);
-          const instance = new component.component(attributes);
           instance.children = children;
           instance.attributes = attributes;
-          const domMap = this.smlTree(instance.render());
-          smlElements[elementIndex].tree = domMap;
-          this.display(componentFragment, ...domMap);
-          fragment.appendChild(componentFragment);
-        }
+          this.buildDom(componentFragment, tree);
+          mainFragment.appendChild(componentFragment);
         return ;
       }
+      const tagName = smlNode.open.name;
       const element = document.createElement(tagName);
       for (let attribute in attributes) {
         if (attributes[attribute] === true) {
@@ -66,15 +56,14 @@ class SML {
         }
       }
       if (!this.selfClosingTags.includes(tagName) && children.length) {
-        this.display(element, ...children);
+        this.buildDom(element, ...children);
       }
-      fragment.appendChild(element);
+      mainFragment.appendChild(element);
     });
-    elementParent.appendChild(fragment);
+    elementParent.appendChild(mainFragment);
   }
 
-
-  get componentClasses() {
+  _getComponents() {
     return this.components;
   }
 
