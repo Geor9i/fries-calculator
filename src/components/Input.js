@@ -5,8 +5,11 @@ export default class Input extends SMLComponent {
         super()
     }
 
+    onInit() {
+        this.title = `On Init Title`;
+    }
+
     render() {
-        const title = 'This is a title';
         const p = 'This is a paragraph';
         const four = 4;
         const red = 'red'
@@ -14,7 +17,7 @@ export default class Input extends SMLComponent {
 
         return this.m `
         <section>
-        <h1>${ title }</h1>
+        <h1>${ this.title }</h1>
         <p>${ p }</p>
         <input ${variable}=${red} >
 

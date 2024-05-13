@@ -4,10 +4,20 @@ export default class SMLComponent {
   constructor() {
     this.state = {};
     this.sml = sml;
+    this.onInit();
   }
 
   render() {
-    throw new Error("Render Method Must be defined!");
+    throw new Error("Render method must be defined!");
+  }
+
+  onInit() {
+  }
+
+  onDestroy() {
+  }
+
+  onUpdate() {
   }
 
   useState(initialValue) {
@@ -47,8 +57,9 @@ export default class SMLComponent {
     this.setRoot(rootElement);
     const  { htmlString, placeHolders } = this.render();
     const tree = this.sml.smlTree({ htmlString, placeHolders });
-    const appTree = { isComponent: true, tree, string: htmlString };
-    this.sml.buildDom(this.root, appTree);
+    this.appTree = { isComponent: true, tree, string: htmlString };
+    console.log(this.appTree);
+    this.sml.buildDom(this.root, this.appTree);
   }
 
   loadComponents(...components) {

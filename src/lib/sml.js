@@ -29,7 +29,7 @@ class SML {
     } else if(treeType === 'object'){
       nodes = componentTree.children;
     } else {
-      nodes = [...componentTree];
+      nodes = typeof componentTree === 'string' ? [componentTree] : [...componentTree];
     }
     nodes.forEach((smlNode) => {
       if (typeof smlNode === "string") {
@@ -56,7 +56,7 @@ class SML {
         }
       }
       if (!this.selfClosingTags.includes(tagName) && children.length) {
-        this.buildDom(element, ...children);
+        this.buildDom(element, children);
       }
       mainFragment.appendChild(element);
     });
@@ -66,8 +66,6 @@ class SML {
   _getComponents() {
     return this.components;
   }
-
-
   
 }
 
