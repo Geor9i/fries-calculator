@@ -1,16 +1,14 @@
 import {
   patterns,
   selfClosingTags,
-  validHTMLElements,
 } from "./constants/constants.js";
 import HTMLInterpreters from "./utils/HTMLInterpreters.js";
 
-export default class SML {
+class SML {
   static dependencies = ["ObjectUtil"];
 
   constructor() {
     this.selfClosingTags = selfClosingTags;
-    this.validHTMLElements = validHTMLElements;
     this.regex = patterns;
     this.components = null;
     this.htmlUtil = new HTMLInterpreters();
@@ -83,3 +81,5 @@ export default class SML {
 
   
 }
+
+export const sml = new SML();

@@ -7,7 +7,6 @@ import Options from "./components/options.js";
 import ResultsDisplay from "./components/results.js";
 import DependencyHub from "./dependencyResolvers/dependencyHub.js";
 import SMLComponent from "./lib/smlComponent.js";
-import SML from "./lib/sml.js";
 import Input from "./components/Input.js";
 
 // const options = DependencyHub.provide(Options);

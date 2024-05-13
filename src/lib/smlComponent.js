@@ -1,9 +1,9 @@
-import SML from "./sml.js";
+import { sml } from "./sml.js";
 
 export default class SMLComponent {
   constructor() {
     this.state = {};
-    this.sml = new SML();
+    this.sml = sml;
   }
 
   render() {
