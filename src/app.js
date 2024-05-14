@@ -15,24 +15,18 @@ import Test from "./components/test.js";
 // const resultsDisplay = DependencyHub.provide(ResultsDisplay);
 
 class App extends SMLComponent {
-  render() {
 
+
+  render() {
     const text = 'This is some text';
     const getClass = () => 'red';
 
     return this.m`
-    first
     <h1 class="title">Fries calculator</h1>
-    second
     <p class=${getClass}>${text}</p>
-    third
     <Input>
-        <Test />
+    <p style="box-shadow: 1px 0 5px">SML Child</p>
     </Input>
-    bla
-    <Test />
-    fourth
-
     `;
   }
 }

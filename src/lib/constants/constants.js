@@ -1,11 +1,11 @@
 export const patterns = {
     whitespace: /\s/,
-    element: /<(?<tagName>\w+)[^<>]*[\/\s]?>[\s\S]*?<\/\k<tagName>>|<(?<tagname>\w+)[^<>\/]*[\/\s]?>/g,
+    element: /<(?<tagName>[-\w]+)[^<>]*[\/\s]?>[\s\S]*?<\/\k<tagName>>|<(?<tagname>\w+)[^<>\/]*[\/\s]?>/g,
     text: /[^<>]/g,
-    tag: /<\/?(?<tagName>\w+)[^<>]*?>/g,
-    openingTag: /<(?<tagName>\w+)[^<>]*?[^\/]*>/,
-    closingTag: /<\/(?<tagName>\w+)\s*>/,
-    selfClosingTag: /<(?<tagName>\w+)[^<>]*[\/]>/,
+    tag: /<\/?(?<tagName>[-\w]+)[^<>]*?>/g,
+    openingTag: /<(?<tagName>[-\w]+)[^<>]*?[^\/]*>/,
+    closingTag: /<\/(?<tagName>[-\w]+)\s*>/,
+    selfClosingTag: /<(?<tagName>[-\w]+)[^<>]*[\/]>/,
     commentTag: /<!--.+?-->/g,
     attribute: /\s+(?<attribute>[-@%&$£*#a-z]+)(?:\s*="(?<value>[^"]*)")?/g
   }
@@ -35,4 +35,6 @@ export const patterns = {
       "samp", "script", "section", "select", "slot", "small", "source", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody",
       "td", "template", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "u", "ul", "var", "video", "wbr"
   ];
+
+  export const smlTags = ["sml-content"]
   

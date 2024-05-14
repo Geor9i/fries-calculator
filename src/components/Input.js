@@ -11,17 +11,10 @@ export default class Input extends SMLComponent {
 
     render() {
         const p = 'This is a paragraph';
-        const four = 4;
-        const red = 'red'
-        let variable = 'class';
-
         return this.m `
         <section>
+        <sml-content />
         <h1>${ this.title }</h1>
-        <p>${ p }</p>
-        <input ${variable}=${red} >
-
-        
         </section>`
     }
 }

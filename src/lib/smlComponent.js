@@ -1,8 +1,10 @@
 import { sml } from "./sml.js";
+import { smlDom } from "./smlDom.js";
 
 export default class SMLComponent {
   constructor() {
     this.state = {};
+    this.smlDom = smlDom;
     this.sml = sml;
     this.onInit();
   }
@@ -12,6 +14,10 @@ export default class SMLComponent {
   }
 
   onInit() {
+  }
+
+  afterViewInit() {
+
   }
 
   onDestroy() {
@@ -56,10 +62,11 @@ export default class SMLComponent {
   entry(rootElement) {
     this.setRoot(rootElement);
     const  { htmlString, placeHolders } = this.render();
-    this.tree = this.sml.smlTree({ htmlString, placeHolders });
+    this.tree = this.sml.stringToTree({ htmlString, placeHolders });
     const appTree = { isComponent: true, instance: this, string: htmlString };
     console.log(appTree);
-    this.sml.buildDom(this.root, appTree);
+    this.smlDom.buildDom(this.root, appTree);
+    this.afterViewInit();
   }
 
   loadComponents(...components) {
