@@ -151,6 +151,7 @@ export default class ObjectUtil {
         array: `[ ${key} ]`,
         set: `$[ ${value} ]`,
         weakset: `$[ ${value} ]`,
+        regex: `\/ ${key} \/`,
         number: `${value}`,
         string: `${value}`,
         null: `${value}`,
@@ -176,6 +177,7 @@ export default class ObjectUtil {
             globalStructureMatch = globalStructureMatch ? valueMatch : globalStructureMatch;
             return valueMatch;
           } else if (isIterable(typeA)) {
+
             const isObject = typeA === 'object';
             const isMap = ['map', 'weakmap'].includes(typeA);
             const isSet = ['set', 'weakset'].includes(typeA);
@@ -195,6 +197,10 @@ export default class ObjectUtil {
             }
 
             for (let i = 0; i < iteratorA.length; i++) {
+              const name = iteratorA[i];
+              if (options?.exclude.includes(name)) {
+                continue;
+              }
               const value1 = isObject ? a[iteratorA[i]] : isMap ? iteratorA[i][1] : iteratorA[i];
               const value2 = isObject ? a[iteratorA[i]] : isMap ? iteratorB[i][1] : iteratorB[i];
               const valueType1 = this.typeof(value1);
@@ -244,36 +250,6 @@ export default class ObjectUtil {
     }
     return {globalReferenceMatch, globalStructureMatch};
   }
-
-  objectToTreeString(obj, indent = 0) {
-    const keys = Object.keys(obj);
-    let result = '';
-  
-    keys.forEach((key, index) => {
-      const value = obj[key];
-      const valueType = typeof value;
-      const isObject = valueType === 'object' && value !== null && !Array.isArray(value);
-      const isArray = Array.isArray(value);
-  
-      // Indentation
-      result += '│   '.repeat(indent);
-  
-      // Key
-      result += (index === keys.length - 1 ? '└───' : '├───') + key;
-  
-      // Value
-      if (isObject || isArray) {
-        result += '\n';
-        result += this.objectToTreeString(value, indent + 1);
-      } else {
-        result += '\n';
-      }
-    });
-  
-    return result;
-  }
-  
-
 
   hasOwnProperties(object, properties, operator = "&&") {
     if (operator === "&&") {

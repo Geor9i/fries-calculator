@@ -1,11 +1,13 @@
 import { sml } from "./sml.js";
 import { smlDom } from "./smlDom.js";
+import ObjectUtil from "./utils/objectUtil.js";
 
 export default class SMLComponent {
   constructor() {
     this.state = {};
     this.smlDom = smlDom;
     this.sml = sml;
+    this.objectUtil = new ObjectUtil();
     this.onInit();
   }
 
@@ -64,7 +66,8 @@ export default class SMLComponent {
     const  { htmlString, placeHolders } = this.render();
     this.tree = this.sml.stringToTree({ htmlString, placeHolders });
     const appTree = { isComponent: true, instance: this, string: htmlString };
-    console.log(appTree);
+    let result = this.objectUtil.compare(appTree, appTree, {log: true, fullReport: true, exclude: ['instance', 'validHTMLElements ', 'regex', 'selfClosingTags ']})
+    console.log(result);
     this.smlDom.buildDom(this.root, appTree);
     this.afterViewInit();
   }
