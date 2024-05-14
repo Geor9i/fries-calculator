@@ -177,10 +177,12 @@ export default class ObjectUtil {
             return valueMatch;
           } else if (isIterable(typeA)) {
             const isObject = typeA === 'object';
+            const isMap = ['map', 'weakmap'].includes(typeA);
+            const isSet = ['set', 'weakset'].includes(typeA);
             let [iteratorA, iteratorB] = [Array.from(a), Array.from(b)];
             if (isObject) {
               [iteratorA, iteratorB] = [Object.keys(a), Object.keys(b)];
-            }
+            } 
 
             if (iteratorA.length !== iteratorB.length) {
               map += "\n";
@@ -193,8 +195,8 @@ export default class ObjectUtil {
             }
 
             for (let i = 0; i < iteratorA.length; i++) {
-              const value1 = isObject ? a[iteratorA[i]] : iteratorA[i];
-              const value2 = isObject ? b[iteratorB[i]] : iteratorB[i];
+              const value1 = isObject ? a[iteratorA[i]] : isMap ? iteratorA[i][1] : iteratorA[i];
+              const value2 = isObject ? a[iteratorA[i]] : isMap ? iteratorB[i][1] : iteratorB[i];
               const valueType1 = this.typeof(value1);
               const valueType2 = this.typeof(value2);
               map += "\n";

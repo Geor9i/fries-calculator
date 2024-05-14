@@ -14,7 +14,6 @@ class SMLDOM {
 
 
   test() {
-
     const complexObject = {
       stringProp: "Hello, world!",
       numberProp: 42,
@@ -49,7 +48,7 @@ class SMLDOM {
     complexObject.weakSetProp.add(weakObject2);
     complexObject.weakMapProp.set(weakObject1, "Value 1");
     complexObject.weakMapProp.set(weakObject2, "Value 2");
-
+    
 
     const complexObject2 = {
       stringProp: "Hello, world!",
@@ -81,17 +80,19 @@ class SMLDOM {
     // Add some entries to the WeakSet and WeakMap
     const weakObject3 = { id: 1 };
     const weakObject4 = { id: 2 };
-    complexObject2.weakSetProp.add(weakObject3);
-    complexObject2.weakSetProp.add(weakObject4);
-    complexObject2.weakMapProp.set(weakObject3, "Value 1");
-    complexObject2.weakMapProp.set(weakObject4, "Value 2");
+    complexObject.weakSetProp.add(weakObject3);
+    complexObject.weakSetProp.add(weakObject4);
+    complexObject.weakMapProp.set(weakObject3, "Value 1");
+    complexObject.weakMapProp.set(weakObject4, "Value 2");
+    
+
 
 
     const test1 = complexObject;
     const test2 = complexObject2;
 
     // this.objectUtil.compare(undefined, null)
-    const result = this.objectUtil.compare(test1, test1, {fullReport: true, log: true, types: true});
+    const result = this.objectUtil.compare(test1, test2, {fullReport: true, log: true, types: true});
     console.log(result);
   }
 
