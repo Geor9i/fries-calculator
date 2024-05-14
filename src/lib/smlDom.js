@@ -1,4 +1,4 @@
-import ObjectUtil from "../utils/objectUtil.js";
+import ObjectUtil from "./utils/objectUtil.js";
 import {
   selfClosingTags,
 } from "./constants/constants.js";
@@ -9,7 +9,28 @@ class SMLDOM {
     this.selfClosingTags = selfClosingTags;
     this.components = null;
     this.objectUtil = new ObjectUtil();
+    this.test()
   }
+
+
+  test() {
+    console.log(this.objectUtil.typeof(42)); // "number"
+    console.log(this.objectUtil.typeof('hello')); // "string"
+    console.log(this.objectUtil.typeof(true)); // "boolean"
+    console.log(this.objectUtil.typeof(null)); // "null"
+    console.log(this.objectUtil.typeof(undefined)); // "undefined"
+    console.log(this.objectUtil.typeof({})); // "object"
+    console.log(this.objectUtil.typeof([])); // "array"
+    console.log(this.objectUtil.typeof(new Date())); // "date"
+    console.log(this.objectUtil.typeof(/regex/)); // "regexp"
+    console.log(this.objectUtil.typeof(new Map())); // "map"
+    console.log(this.objectUtil.typeof(new Set())); // "set"
+    console.log(this.objectUtil.typeof(new WeakMap())); // "weakmap"
+    console.log(this.objectUtil.typeof(new WeakSet())); // "weakset"
+    console.log(this.objectUtil.typeof(new Error())); // "error"
+    console.log(this.objectUtil.typeof(function() {})); // "function"
+  }
+
 
   buildDom(elementParent, componentTree) {
     const mainFragment = document.createDocumentFragment();

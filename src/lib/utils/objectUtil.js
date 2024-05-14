@@ -113,17 +113,26 @@ export default class ObjectUtil {
     }, [])
   }
 
-  typeof(target) {
-    if (target === null) return null;
-    if (target === undefined) return undefined;
-    let types = ["number", "string", "object", "boolean"];
-    let targetType = typeof target;
-    if (!types.includes(targetType)) return targetType;
 
-    if (targetType !== "object") {
-      return targetType;
-    } else {
-      return Array.isArray(target) ? "array" : "object";
+  typeof(target) {
+    if (target === null) return 'null';
+    if (Array.isArray(target)) return 'array';
+    
+    const type = typeof target;
+    if (type !== 'object' || type === 'undefined') {
+      return type;
+    }
+  
+    if (target instanceof Date) return 'date';
+    if (target instanceof RegExp) return 'regexp';
+    if (target instanceof Map) return 'map';
+    if (target instanceof Set) return 'set';
+    if (target instanceof WeakMap) return 'weakmap';
+    if (target instanceof WeakSet) return 'weakset';
+    if (typeof target[Symbol.iterator] === 'function') return 'iterable';
+  
+    if (type === 'object') {
+      return Object.prototype.toString.call(target).slice(8, -1).toLowerCase();
     }
   }
 
