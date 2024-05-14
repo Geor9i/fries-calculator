@@ -15,19 +15,83 @@ class SMLDOM {
 
   test() {
 
-    const testObject1 = {
-      friends: ['Peter', 'James', 'Linda']
+    const complexObject = {
+      stringProp: "Hello, world!",
+      numberProp: 42,
+      booleanProp: true,
+      nullProp: null,
+      undefinedProp: undefined,
+      arrayProp: [1, 2, 3],
+      objectProp: {
+        nestedStringProp: "Nested string",
+        nestedNumberProp: 123,
+        nestedBooleanProp: false,
+        nestedArrayProp: [4, 5, 6],
+        nestedObjectProp: {
+          deeplyNestedStringProp: "Deeply nested string",
+          deeplyNestedNumberProp: 789,
+          deeplyNestedBooleanProp: true
+        }
+      },
+      setProp: new Set([1, 2, 3]),
+      mapProp: new Map([
+        ['key1', 'value1'],
+        ['key2', 'value2']
+      ]),
+      weakSetProp: new WeakSet(),
+      weakMapProp: new WeakMap(),
     };
+    
+    // Add some entries to the WeakSet and WeakMap
+    const weakObject1 = { id: 1 };
+    const weakObject2 = { id: 2 };
+    complexObject.weakSetProp.add(weakObject1);
+    complexObject.weakSetProp.add(weakObject2);
+    complexObject.weakMapProp.set(weakObject1, "Value 1");
+    complexObject.weakMapProp.set(weakObject2, "Value 2");
 
-    const testObject2 = {
-      friends: ['Peter', 4, 'Linda', 5]
+
+    const complexObject2 = {
+      stringProp: "Hello, world!",
+      numberProp: 42,
+      booleanProp: true,
+      nullProp: null,
+      undefinedProp: undefined,
+      arrayProp: [1, 2, 3],
+      objectProp: {
+        nestedStringProp: "Nested string",
+        nestedNumberProp: 123,
+        nestedBooleanProp: false,
+        nestedArrayProp: [4, 5, 6],
+        nestedObjectProp: {
+          deeplyNestedStringProp: "Deeply nested string",
+          deeplyNestedNumberProp: 789,
+          deeplyNestedBooleanProp: true
+        }
+      },
+      setProp: new Set([1, 2, 3]),
+      mapProp: new Map([
+        ['key1', 'value1'],
+        ['key2', 'value2']
+      ]),
+      weakSetProp: new WeakSet(),
+      weakMapProp: new WeakMap(),
     };
+    
+    // Add some entries to the WeakSet and WeakMap
+    const weakObject3 = { id: 1 };
+    const weakObject4 = { id: 2 };
+    complexObject2.weakSetProp.add(weakObject3);
+    complexObject2.weakSetProp.add(weakObject4);
+    complexObject2.weakMapProp.set(weakObject3, "Value 1");
+    complexObject2.weakMapProp.set(weakObject4, "Value 2");
 
-    const test1 = testObject1;
-    const test2 = testObject1;
+
+    const test1 = complexObject;
+    const test2 = complexObject2;
 
     // this.objectUtil.compare(undefined, null)
-    const result = this.objectUtil.compare(test1, testObject2, true, true);
+    const result = this.objectUtil.compare(test1, test1, {fullReport: true, log: true, types: true});
     console.log(result);
   }
 

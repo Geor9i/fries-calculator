@@ -136,7 +136,7 @@ export default class ObjectUtil {
     }
   }
 
-  compare(prop1, prop2, log = false, fullReport = false) {
+  compare(prop1, prop2, options) {
     let map = ``;
     let globalStructureMatch = true; 
     let globalReferenceMatch = true; 
@@ -146,11 +146,15 @@ export default class ObjectUtil {
     const placeHolder = (type, value, key) => {
       const placeholders = {
         object: `{ ${key} }`,
+        weakmap: `{{ ${key} }}`,
         map: `{{ ${key} }}`,
         array: `[ ${key} ]`,
         set: `$[ ${value} ]`,
+        weakset: `$[ ${value} ]`,
         number: `${value}`,
         string: `${value}`,
+        null: `${value}`,
+        boolean: `${value}`,
       }
       return placeholders[type]
     }
@@ -183,7 +187,7 @@ export default class ObjectUtil {
               map += `└─── ${placeHolder(typeA, a, 'a')} !== ${placeHolder(typeB, b, 'b')} | length diff: ${Math.abs(iteratorA.length - iteratorB.length)}`;
               globalStructureMatch = false;
               globalReferenceMatch = false;
-              if (!fullReport) {
+              if (!options.fullReport) {
                 return false;
               }
             }
@@ -196,24 +200,24 @@ export default class ObjectUtil {
               map += "\n";
               let typeMatch = valueType1 === valueType2;
               let valueMatch = value1 === value2;
-              let referenceMatch = typeMatch && valueMatch && isIterable(valueType1);
+              let referenceMatch = (isPrimitive(typeA) && valueMatch) || (isIterable(typeA) && a === b);
               globalReferenceMatch = globalReferenceMatch ? referenceMatch : globalReferenceMatch;
 
               map += '│   '.repeat(indent);
-              map += `${i === iteratorA.length - 1 ? '└───' : '├───'} ${typeMatch && valueMatch ?
-                `${placeHolder(valueType1, value1, iteratorA[i])}` : `${placeHolder(valueType1, value1, iteratorA[i])} !== ${
-                  placeHolder(valueType2, value2, iteratorB[i])} ${!referenceMatch ? '| !== Ref' : ''} ${!valueMatch ? `i: ${i || index || ''}` : ''}`}`;
+              map += `${i === iteratorA.length - 1 ? '└───' : '├───'} ${referenceMatch && valueMatch ?
+                `${placeHolder(valueType1, value1, iteratorA[i])}  ${options.types ? `( ${valueType1} )` : ''}` : `${placeHolder(valueType1, value1, iteratorA[i])} !== ${
+                  placeHolder(valueType2, value2, iteratorB[i])} ${!referenceMatch ? '| !== Ref' : ''} ${!valueMatch ? `| i: ${i || index || ''}` : ''}`}`;
   
               if (!typeMatch || !valueMatch) {
                 globalStructureMatch = false;
-                if (!fullReport) {
+                if (!options.fullReport) {
                   return false;
                 }
               }
   
               if (isIterable(valueType1)) {
                 const depthMatch = analyze(value1, value2, indent + 1, i);
-                if (!fullReport && !depthMatch) {
+                if (!options.fullReport && !depthMatch) {
                   return;
                 }
               }
@@ -233,7 +237,7 @@ export default class ObjectUtil {
     }
     
     analyze(prop1, prop2, indent);
-    if (log) {
+    if (options.log) {
       console.log(map);
     }
     return {globalReferenceMatch, globalStructureMatch};
