@@ -16,13 +16,11 @@ class SMLDOM {
   test() {
 
     const testObject1 = {
-      person: {name: 'John', age: 20},
       friends: ['Peter', 'James', 'Linda']
     };
 
     const testObject2 = {
-      person: {name: 'John', age: 20},
-      friends: ['Peter', 4, 'Linda']
+      friends: ['Peter', 4, 'Linda', 5]
     };
 
     const test1 = testObject1;

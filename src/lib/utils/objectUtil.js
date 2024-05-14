@@ -138,7 +138,8 @@ export default class ObjectUtil {
 
   compare(prop1, prop2, log = false, fullReport = false) {
     let map = ``;
-    let structureMatch = true; 
+    let globalStructureMatch = true; 
+    let globalReferenceMatch = true; 
     const isInvalid = (type) => ['undefined', 'null'].some(invalidType => invalidType === type);
     const isIterable = (type) => ['object', 'array', 'set', 'weakset', 'map', 'weakmap'].includes(type);
     const isPrimitive = (type) => ['number', 'string', 'boolean'].includes(type);
@@ -162,22 +163,31 @@ export default class ObjectUtil {
       if (typeA === typeB) {
         if (isInvalid(a)) {
           map + `${a} === ${b} ( ${typeA} )`;
-          structureMatch = false;
-          return structureMatch;
+          return true;
         } else {
-
           if(isPrimitive(typeA)){
             let valueMatch = a === b;
             map += "\n";
             map += `└─── ${valueMatch ? `${value1}` : `${value1} (${valueType1}) !== ${value2} (${valueType2})`}`
-            structureMatch = structureMatch ? valueMatch : structureMatch;
-            return structureMatch;
+            globalStructureMatch = globalStructureMatch ? valueMatch : globalStructureMatch;
+            return valueMatch;
           } else if (isIterable(typeA)) {
             const isObject = typeA === 'object';
             let [iteratorA, iteratorB] = [Array.from(a), Array.from(b)];
             if (isObject) {
               [iteratorA, iteratorB] = [Object.keys(a), Object.keys(b)];
             }
+
+            if (iteratorA.length !== iteratorB.length) {
+              map += "\n";
+              map += `└─── ${placeHolder(typeA, a, 'a')} !== ${placeHolder(typeB, b, 'b')} | length diff: ${Math.abs(iteratorA.length - iteratorB.length)}`;
+              globalStructureMatch = false;
+              globalReferenceMatch = false;
+              if (!fullReport) {
+                return false;
+              }
+            }
+
             for (let i = 0; i < iteratorA.length; i++) {
               const value1 = isObject ? a[iteratorA[i]] : iteratorA[i];
               const value2 = isObject ? b[iteratorB[i]] : iteratorB[i];
@@ -186,40 +196,47 @@ export default class ObjectUtil {
               map += "\n";
               let typeMatch = valueType1 === valueType2;
               let valueMatch = value1 === value2;
+              let referenceMatch = typeMatch && valueMatch && isIterable(valueType1);
+              globalReferenceMatch = globalReferenceMatch ? referenceMatch : globalReferenceMatch;
+
               map += '│   '.repeat(indent);
               map += `${i === iteratorA.length - 1 ? '└───' : '├───'} ${typeMatch && valueMatch ?
                 `${placeHolder(valueType1, value1, iteratorA[i])}` : `${placeHolder(valueType1, value1, iteratorA[i])} !== ${
-                  placeHolder(valueType2, value2, iteratorB[i])} ${!valueMatch && typeMatch && isIterable(valueType1)
-                  ? '!== Ref' : ''} ${!valueMatch ? `i: ${i || index || ''}` : ''}`}`;
+                  placeHolder(valueType2, value2, iteratorB[i])} ${!referenceMatch ? '| !== Ref' : ''} ${!valueMatch ? `i: ${i || index || ''}` : ''}`}`;
   
               if (!typeMatch || !valueMatch) {
-                structureMatch = false;
+                globalStructureMatch = false;
                 if (!fullReport) {
-                  return structureMatch;
+                  return false;
                 }
               }
   
               if (isIterable(valueType1)) {
                 const depthMatch = analyze(value1, value2, indent + 1, i);
-                if (!fullReport) {
-                  structureMatch = structureMatch ? depthMatch : structureMatch;
-                  return structureMatch;
+                if (!fullReport && !depthMatch) {
+                  return;
                 }
+              }
+
+              if (i === iteratorA.length - 1) {
+                return true;
               }
             }
           }
         }
       } else {
         map += `└─── ${a} (${typeA}) !== ${b} (${typeB})`;
-        structureMatch = false;
-        return structureMatch;
+        globalStructureMatch = false;
+        return globalStructureMatch;
       }
-      return structureMatch
+      return globalStructureMatch
     }
     
-    let result = analyze(prop1, prop2, indent)
-    console.log(map);
-    return result;
+    analyze(prop1, prop2, indent);
+    if (log) {
+      console.log(map);
+    }
+    return {globalReferenceMatch, globalStructureMatch};
   }
 
   objectToTreeString(obj, indent = 0) {
