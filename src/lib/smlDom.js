@@ -14,21 +14,23 @@ class SMLDOM {
 
 
   test() {
-    console.log(this.objectUtil.typeof(42)); // "number"
-    console.log(this.objectUtil.typeof('hello')); // "string"
-    console.log(this.objectUtil.typeof(true)); // "boolean"
-    console.log(this.objectUtil.typeof(null)); // "null"
-    console.log(this.objectUtil.typeof(undefined)); // "undefined"
-    console.log(this.objectUtil.typeof({})); // "object"
-    console.log(this.objectUtil.typeof([])); // "array"
-    console.log(this.objectUtil.typeof(new Date())); // "date"
-    console.log(this.objectUtil.typeof(/regex/)); // "regexp"
-    console.log(this.objectUtil.typeof(new Map())); // "map"
-    console.log(this.objectUtil.typeof(new Set())); // "set"
-    console.log(this.objectUtil.typeof(new WeakMap())); // "weakmap"
-    console.log(this.objectUtil.typeof(new WeakSet())); // "weakset"
-    console.log(this.objectUtil.typeof(new Error())); // "error"
-    console.log(this.objectUtil.typeof(function() {})); // "function"
+
+    const testObject1 = {
+      person: {name: 'John', age: 20},
+      friends: ['Peter', 'James', 'Linda']
+    };
+
+    const testObject2 = {
+      person: {name: 'John', age: 20},
+      friends: ['Peter', 4, 'Linda']
+    };
+
+    const test1 = testObject1;
+    const test2 = testObject1;
+
+    // this.objectUtil.compare(undefined, null)
+    const result = this.objectUtil.compare(test1, testObject2, true, true);
+    console.log(result);
   }
 
 

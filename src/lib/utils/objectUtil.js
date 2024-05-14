@@ -136,6 +136,121 @@ export default class ObjectUtil {
     }
   }
 
+  compare(prop1, prop2, log = false, fullReport = false) {
+    let map = ``;
+    let structureMatch = true; 
+    const isInvalid = (type) => ['undefined', 'null'].some(invalidType => invalidType === type);
+    const isIterable = (type) => ['object', 'array', 'set', 'weakset', 'map', 'weakmap'].includes(type);
+    const isPrimitive = (type) => ['number', 'string', 'boolean'].includes(type);
+    const placeHolder = (type, value, key) => {
+      const placeholders = {
+        object: `{ ${key} }`,
+        map: `{{ ${key} }}`,
+        array: `[ ${key} ]`,
+        set: `$[ ${value} ]`,
+        number: `${value}`,
+        string: `${value}`,
+      }
+      return placeholders[type]
+    }
+    let indent = 0;
+
+    const analyze = (a, b, indent, index) => {
+      const typeA = this.typeof(a);
+      const typeB = this.typeof(b);
+
+      if (typeA === typeB) {
+        if (isInvalid(a)) {
+          map + `${a} === ${b} ( ${typeA} )`;
+          structureMatch = false;
+          return structureMatch;
+        } else {
+
+          if(isPrimitive(typeA)){
+            let valueMatch = a === b;
+            map += "\n";
+            map += `└─── ${valueMatch ? `${value1}` : `${value1} (${valueType1}) !== ${value2} (${valueType2})`}`
+            structureMatch = structureMatch ? valueMatch : structureMatch;
+            return structureMatch;
+          } else if (isIterable(typeA)) {
+            const isObject = typeA === 'object';
+            let [iteratorA, iteratorB] = [Array.from(a), Array.from(b)];
+            if (isObject) {
+              [iteratorA, iteratorB] = [Object.keys(a), Object.keys(b)];
+            }
+            for (let i = 0; i < iteratorA.length; i++) {
+              const value1 = isObject ? a[iteratorA[i]] : iteratorA[i];
+              const value2 = isObject ? b[iteratorB[i]] : iteratorB[i];
+              const valueType1 = this.typeof(value1);
+              const valueType2 = this.typeof(value2);
+              map += "\n";
+              let typeMatch = valueType1 === valueType2;
+              let valueMatch = value1 === value2;
+              map += '│   '.repeat(indent);
+              map += `${i === iteratorA.length - 1 ? '└───' : '├───'} ${typeMatch && valueMatch ?
+                `${placeHolder(valueType1, value1, iteratorA[i])}` : `${placeHolder(valueType1, value1, iteratorA[i])} !== ${
+                  placeHolder(valueType2, value2, iteratorB[i])} ${!valueMatch && typeMatch && isIterable(valueType1)
+                  ? '!== Ref' : ''} ${!valueMatch ? `i: ${i || index || ''}` : ''}`}`;
+  
+              if (!typeMatch || !valueMatch) {
+                structureMatch = false;
+                if (!fullReport) {
+                  return structureMatch;
+                }
+              }
+  
+              if (isIterable(valueType1)) {
+                const depthMatch = analyze(value1, value2, indent + 1, i);
+                if (!fullReport) {
+                  structureMatch = structureMatch ? depthMatch : structureMatch;
+                  return structureMatch;
+                }
+              }
+            }
+          }
+        }
+      } else {
+        map += `└─── ${a} (${typeA}) !== ${b} (${typeB})`;
+        structureMatch = false;
+        return structureMatch;
+      }
+      return structureMatch
+    }
+    
+    let result = analyze(prop1, prop2, indent)
+    console.log(map);
+    return result;
+  }
+
+  objectToTreeString(obj, indent = 0) {
+    const keys = Object.keys(obj);
+    let result = '';
+  
+    keys.forEach((key, index) => {
+      const value = obj[key];
+      const valueType = typeof value;
+      const isObject = valueType === 'object' && value !== null && !Array.isArray(value);
+      const isArray = Array.isArray(value);
+  
+      // Indentation
+      result += '│   '.repeat(indent);
+  
+      // Key
+      result += (index === keys.length - 1 ? '└───' : '├───') + key;
+  
+      // Value
+      if (isObject || isArray) {
+        result += '\n';
+        result += this.objectToTreeString(value, indent + 1);
+      } else {
+        result += '\n';
+      }
+    });
+  
+    return result;
+  }
+  
+
 
   hasOwnProperties(object, properties, operator = "&&") {
     if (operator === "&&") {
