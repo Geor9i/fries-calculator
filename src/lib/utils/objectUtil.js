@@ -137,116 +137,144 @@ export default class ObjectUtil {
   }
 
   compare(prop1, prop2, options) {
-    let map = ``;
     let globalStructureMatch = true; 
     let globalReferenceMatch = true; 
     const isInvalid = (type) => ['undefined', 'null'].some(invalidType => invalidType === type);
     const isIterable = (type) => ['object', 'array', 'set', 'weakset', 'map', 'weakmap'].includes(type);
     const isPrimitive = (type) => ['number', 'string', 'boolean'].includes(type);
+    const isObject = (type) => type === 'object';
+    const isArray = (type) => type === 'array';
+    const isMap = (type) => ['map', 'weakmap'].includes(type);
+    const isSet = (type) => ['set', 'weakset'].includes(type);
+    const objName = (obj) => Object.keys(obj).slice(0, 3).join(', ') + `${Object.keys(obj).length > 3 ? '...' : ''}`;
+    const arrName = (arr) => arr.slice(0, 3).join(', ') + `${arr.length > 3 ? '...' : ''}`;
     const placeHolder = (type, value, key) => {
       const placeholders = {
         object: `{ ${key} }`,
-        weakmap: `{{ ${key} }}`,
-        map: `{{ ${key} }}`,
+        weakmap: `w{[ ${key} ]}`,
+        map: `{[ ${key} ]}`,
         array: `[ ${key} ]`,
-        set: `$[ ${value} ]`,
-        weakset: `$[ ${value} ]`,
+        set: `S[ ${key} ]`,
+        weakset: `wS[ ${value} ]`,
         regex: `\/ ${key} \/`,
-        number: `${value}`,
-        string: `${value}`,
-        null: `${value}`,
+        number: `$ ${value}`,
+        string: `"${value}"`,
+        null: `${type}`,
         boolean: `${value}`,
       }
       return placeholders[type]
     }
-    let indent = 0;
+    const config = {
+      indent: 0,
+      index: null,
+      map: '',
+      invalid: false
+    }
 
-    const analyze = (a, b, indent, index) => {
-      const typeA = this.typeof(a);
-      const typeB = this.typeof(b);
+    const analyze = (a, b, config) => {
+      const aType =   this.typeof(a);
+      const bType = this.typeof(b);
 
-      if (typeA === typeB) {
+      if (aType === bType) {
         if (isInvalid(a)) {
-          map + `${a} === ${b} ( ${typeA} )`;
-          return true;
+          config.map + `${a} === ${b} ( ${aType} )`;
+          return config;
         } else {
-          if(isPrimitive(typeA)){
+          if(isPrimitive(aType)){
             let valueMatch = a === b;
-            map += "\n";
-            map += `└─── ${valueMatch ? `${value1}` : `${value1} (${valueType1}) !== ${value2} (${valueType2})`}`
+            config.map += "\n";
+            config.map += `└─── ${valueMatch ? `${a}` : `${a} (${aType}) !== ${b} (${bType})`}`
             globalStructureMatch = globalStructureMatch ? valueMatch : globalStructureMatch;
             return valueMatch;
-          } else if (isIterable(typeA)) {
+          } else if (isIterable(aType)) {
 
-            const isObject = typeA === 'object';
-            const isMap = ['map', 'weakmap'].includes(typeA);
-            const isSet = ['set', 'weakset'].includes(typeA);
-            let [iteratorA, iteratorB] = [Array.from(a), Array.from(b)];
-            if (isObject) {
+            const parentIsObject = isObject(aType);
+            const parentIsMap = isMap(aType);
+            const parentIsSet = isSet(aType);
+            let iteratorA, iteratorB;
+            if (parentIsObject) {
               [iteratorA, iteratorB] = [Object.keys(a), Object.keys(b)];
-            } 
+            } else if (parentIsMap) {
+              [iteratorA, iteratorB] = [a.entries(), b.entries()];
+            } else {
+            [iteratorA, iteratorB ]= [Array.from(a), Array.from(b)];
+            }
 
-            if (iteratorA.length !== iteratorB.length) {
-              map += "\n";
-              map += `└─── ${placeHolder(typeA, a, 'a')} !== ${placeHolder(typeB, b, 'b')} | length diff: ${Math.abs(iteratorA.length - iteratorB.length)}`;
+            if ((iteratorA?.length ?? a?.size) !== (iteratorB?.length ?? b?.size)) {
+              config.map += "\n";
+              config.map += `└─── ${placeHolder(aType, a, 'a')} !== ${placeHolder(bType, b, 'b')} | length diff: ${Math.abs((iteratorA?.length ?? a?.size) - (iteratorB?.length ?? b?.size))}`;
               globalStructureMatch = false;
               globalReferenceMatch = false;
+              config.invalid = true;
               if (!options.fullReport) {
-                return false;
+                return config;
               }
             }
 
-            for (let i = 0; i < iteratorA.length; i++) {
-              const name = iteratorA[i];
-              if (options?.exclude.includes(name)) {
+            let iterations = Math.max((iteratorA?.length ?? a?.size), (iteratorB?.length ?? b?.size))
+
+            for (let i = 0; i < iterations; i++) {
+              config.map += "\n";
+              const indexItemTypeA = parentIsObject ? this.typeof(Object.values(a)[i]) : parentIsMap ? this.typeof(a.get(Array.from(a)[i][0])) : this.typeof(iteratorA[i]);
+              const indexItemTypeB = parentIsObject ? this.typeof(Object.values(b)[i]) : parentIsMap ? this.typeof(b.get(Array.from(b)[i][0])) : this.typeof(iteratorB[i]);
+              const nameA = isObject(indexItemTypeA) ? objName(iteratorA[i]) : isArray(indexItemTypeA) ? arrName(Object.values(a)[i]) : iteratorA[i];
+              const nameB = isObject(indexItemTypeB) ? objName(iteratorB[i]) : isArray(indexItemTypeB) ? arrName(Object.values(b)[i]) : iteratorB[i];
+              if (options?.exclude &&  nameA === nameB && options?.exclude.includes(nameA)) {
                 continue;
               }
-              const value1 = isObject ? a[iteratorA[i]] : isMap ? iteratorA[i][1] : iteratorA[i];
-              const value2 = isObject ? a[iteratorA[i]] : isMap ? iteratorB[i][1] : iteratorB[i];
-              const valueType1 = this.typeof(value1);
-              const valueType2 = this.typeof(value2);
-              map += "\n";
-              let typeMatch = valueType1 === valueType2;
-              let valueMatch = value1 === value2;
-              let referenceMatch = (isPrimitive(typeA) && valueMatch) || (isIterable(typeA) && a === b);
+              const valueA = parentIsObject ? a[iteratorA[i]] : parentIsMap ? a.get(Array.from(a)[i][0]) : iteratorA[i];
+              const valueB = parentIsObject ? b[iteratorB[i]] : parentIsMap ? b.get(Array.from(b)[i][0]) : iteratorB[i];
+              let typeMatch = indexItemTypeA === indexItemTypeB;
+              let referenceMatch =  valueA === valueB;
               globalReferenceMatch = globalReferenceMatch ? referenceMatch : globalReferenceMatch;
 
-              map += '│   '.repeat(indent);
-              map += `${i === iteratorA.length - 1 ? '└───' : '├───'} ${referenceMatch && valueMatch ?
-                `${placeHolder(valueType1, value1, iteratorA[i])}  ${options.types ? `( ${valueType1} )` : ''}` : `${placeHolder(valueType1, value1, iteratorA[i])} !== ${
-                  placeHolder(valueType2, value2, iteratorB[i])} ${!referenceMatch ? '| !== Ref' : ''} ${!valueMatch ? `| i: ${i || index || ''}` : ''}`}`;
+              let depthConfig = {
+                indent: config.indent + 1,
+                index: i,
+                map: '',
+                invalid: false
+              }
+              let valueMatch = valueA === valueB;
+              if (typeMatch && isIterable(indexItemTypeA)) {
+                depthConfig = analyze(valueA, valueB, depthConfig);
+                valueMatch = !depthConfig.invalid
+                if (!options?.fullReport && !depthConfig.invalid) {
+                  return config;
+                }
+              }
+
+              config.map += '│   '.repeat(config.indent);
+              config.map += `${i === iterations.length - 1 ? '└───' : '├───'} ${referenceMatch && valueMatch ?
+                `${placeHolder(indexItemTypeA, valueA, nameA)}  ${options?.types ? `--> ${indexItemTypeA} ` : ''}` : `${placeHolder(indexItemTypeA, valueA, nameA)} ${valueMatch? "==" : "!=="} ${
+                  placeHolder(indexItemTypeB, valueB, nameB)} ${!referenceMatch ? '| !== Ref' : ''} ${!valueMatch ? `| i: ${i || config.index || ''}` : ''}`}`;
+              config.map += depthConfig.map;
   
               if (!typeMatch || !valueMatch) {
                 globalStructureMatch = false;
-                if (!options.fullReport) {
-                  return false;
-                }
-              }
-  
-              if (isIterable(valueType1)) {
-                const depthMatch = analyze(value1, value2, indent + 1, i);
-                if (!options.fullReport && !depthMatch) {
-                  return;
+                config.invalid = true;
+                if (!options?.fullReport) {
+                  return config;
                 }
               }
 
-              if (i === iteratorA.length - 1) {
-                return true;
+              if (i === iterations - 1) {
+                return config;
               }
             }
           }
         }
       } else {
-        map += `└─── ${a} (${typeA}) !== ${b} (${typeB})`;
+        config.map += `└─── ${placeHolder(aType, a, a)} !== ${placeHolder(bType, b, b)}`;
         globalStructureMatch = false;
-        return globalStructureMatch;
+        config.invalid = true;
+        return config;
       }
-      return globalStructureMatch
+      return config
     }
     
-    analyze(prop1, prop2, indent);
-    if (options.log) {
-      console.log(map);
+    let resultConfig = analyze(prop1, prop2, config);
+    if (options?.log) {
+      console.log(resultConfig.map);
     }
     return {globalReferenceMatch, globalStructureMatch};
   }
