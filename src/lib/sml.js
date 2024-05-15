@@ -114,18 +114,16 @@ import {
       pair.id = i;
       return pair;
     });
-
     return tagPairs.sort(this.sortTagPair);
   }
 
   sortTagPair(a, b) {
-    if (
-      a.open.startIndex <= b.open.startIndex &&
-      a.close.endIndex >= b.close.endIndex
-    ) {
+    if (a.open.startIndex < b.open.startIndex && a.close.endIndex > b.close.endIndex) {
       return -1;
-    } else {
+    } else if (a.open.startIndex > b.open.startIndex && a.close.endIndex < b.close.endIndex) {
       return 1;
+    } else {
+      return 0
     }
   }
 
