@@ -50,7 +50,7 @@ class SmlBaseElement {
 
         Object.defineProperty(this, 'alertComponent', {
             value(changePropKey) {
-                component.changes.push([this, changePropKey]);
+                component.changes.push({component:this, changePropKey});
             },
             enumerable: false,
             writable: false,

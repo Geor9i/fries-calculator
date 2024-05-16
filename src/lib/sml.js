@@ -232,6 +232,7 @@ import { SmlElement } from "./smlElement.js";
           instance.attributes = tagNode.attributes;
           instance.children = tagNode.children;
           instance.render();
+          instance._resetChanges();
           
         tagNode = { ...tagNode, instance };
       }

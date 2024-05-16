@@ -1,4 +1,4 @@
-export default class SmlLink {
+class SmlLink {
     constructor() {
         this.events = {};
     }
@@ -31,3 +31,5 @@ export default class SmlLink {
         }
     }
 }
+
+export const smlLink = new SmlLink();

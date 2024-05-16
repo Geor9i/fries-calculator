@@ -1,5 +1,6 @@
 import { sml } from "./sml.js";
 import { smlDom } from "./smlDom.js";
+import { smlLink } from "./smlLink.js";
 import ObjectUtil from "./utils/objectUtil.js";
 import WatcherArray from "./utils/watcherArray.js";
 
@@ -9,6 +10,7 @@ export default class SMLComponent {
     this.smlDom = smlDom;
     this.sml = sml;
     this.objectUtil = new ObjectUtil();
+    this.smlLink = smlLink;
     Object.defineProperty(this, 'renderMethod', { enumerable:  false, value: this.render });
     this.render = () => this.tree = this.renderMethod();
     Object.defineProperty(this, 'changes', {
@@ -17,8 +19,18 @@ export default class SMLComponent {
     })
     this.isProcessing = false;
     this.changes.on('push', this._pushChanges.bind(this));
+    this._setupLink();
     this.onInit();
   }
+
+  static linkId = 0;
+  static getLinkId() {
+    return (SMLComponent.linkId++).toFixed(0);
+  }
+_setupLink() {
+  this._subscriberId = SMLComponent.getLinkId();
+  // this.smlLink.on('resetChanges', this._subscriberId, this._resetChanges.bind(this)) 
+}
 
   _pushChanges() {
     if (this.isProcessing) return;
@@ -27,6 +39,10 @@ export default class SMLComponent {
       this.onChanges()
       this.isProcessing = false;
     }, 0)
+  }
+
+  _resetChanges() {
+    this.changes.reset();
   }
 
 
@@ -41,7 +57,6 @@ export default class SMLComponent {
   onDestroy() {}
 
   onChanges() {
-    console.log(this.changes, this);
   }
 
   useState(initialValue) {
@@ -81,6 +96,7 @@ export default class SMLComponent {
     this.setRoot(rootElement);
     this.render();
     console.log(this.tree);
+    this._resetChanges();
     this.smlDom.buildDom(this.root, this.tree);
     this.afterViewInit();
   }

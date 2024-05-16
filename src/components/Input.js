@@ -10,9 +10,13 @@ export default class Input extends SMLComponent {
         this.title = `On Init Title`;
     }
 
+    onChanges() {
+        console.log(this.changes);
+    }
+
     afterViewInit() {
         const section = this.tree[0];
-        section.attributes = {...section.attribute, class: 'red'}
+        section.attributes = {...section.attribute, class: 'red'};
     }
 
     render() {
