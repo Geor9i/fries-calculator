@@ -1,4 +1,5 @@
 import SMLComponent from "../lib/smlComponent.js";
+import { SmlElement } from "../lib/smlElement.js";
 
 export default class Input extends SMLComponent {
     constructor() {
@@ -11,11 +12,10 @@ export default class Input extends SMLComponent {
 
     afterViewInit() {
         const section = this.tree[0];
-        console.log(section);
+        section.attributes = {...section.attribute, class: 'red'}
     }
 
     render() {
-        const p = 'This is a paragraph';
         return this.m `
         <section>
         <sml-content />

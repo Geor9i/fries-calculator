@@ -1,6 +1,4 @@
-import DependencyHub from "../dependencyResolvers/dependencyHub.js";
-
-export default class EventBus {
+export default class SmlLink {
     constructor() {
         this.events = {};
     }
@@ -33,5 +31,3 @@ export default class EventBus {
         }
     }
 }
-
-DependencyHub.add(EventBus);

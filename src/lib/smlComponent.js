@@ -1,7 +1,7 @@
 import { sml } from "./sml.js";
 import { smlDom } from "./smlDom.js";
-import SmlElement from "./smlElement.js";
 import ObjectUtil from "./utils/objectUtil.js";
+import WatcherArray from "./utils/watcherArray.js";
 
 export default class SMLComponent {
   constructor() {
@@ -9,24 +9,39 @@ export default class SMLComponent {
     this.smlDom = smlDom;
     this.sml = sml;
     this.objectUtil = new ObjectUtil();
+    Object.defineProperty(this, 'renderMethod', { enumerable:  false, value: this.render });
+    this.render = () => this.tree = this.renderMethod();
+    Object.defineProperty(this, 'changes', {
+      enumerable:false,
+      value: new WatcherArray()
+    })
+    this.isProcessing = false;
+    this.changes.on('push', this._pushChanges.bind(this));
     this.onInit();
   }
+
+  _pushChanges() {
+    if (this.isProcessing) return;
+    this.isProcessing = true;
+    setTimeout(() => {
+      this.onChanges()
+      this.isProcessing = false;
+    }, 0)
+  }
+
 
   render() {
     throw new Error("Render method must be defined!");
   }
 
-  onInit() {
-  }
+  onInit() {}
 
-  afterViewInit() {
+  afterViewInit() {}
 
-  }
+  onDestroy() {}
 
-  onDestroy() {
-  }
-
-  onUpdate() {
+  onChanges() {
+    console.log(this.changes, this);
   }
 
   useState(initialValue) {
@@ -53,7 +68,7 @@ export default class SMLComponent {
         placeHolders.push({ index: htmlString.length, value });
       }
     });
-    return { htmlString, placeHolders };
+    return this.sml.stringToTree({ htmlString, placeHolders, parentComponent: this });
   }
 
   setRoot(rootElement) {
@@ -63,41 +78,11 @@ export default class SMLComponent {
   }
 
   entry(rootElement) {
-
-    const element = new SmlElement('div', {class: {red: 'blue'}}, []);
-    let car = {color: 'red', type: 'suv'}
-    element.attributes.vehicle = car
-    car.color = 'blue'
-
-    const nums = [1,2,3,4]
-
-    const obj1 = {
-      name: 'mimi',
-      age: 16,
-      nums: [1, 2, 3]
-    }
-
-    const obj2 = {
-      name: 'mimi',
-      age: 16,
-      nums: [1, 2, 3, 4]
-    }
-
-
-    const test1 = obj1;
-    const test2 = obj2;
-    const result = this.objectUtil.compare(test1, test2, {log:true, fullReport: true, types:true})
-    console.log(result);
-
-
-
     this.setRoot(rootElement);
-    const  { htmlString, placeHolders } = this.render();
-    this.tree = this.sml.stringToTree({ htmlString, placeHolders });
-    const appTree = { instance: this, string: htmlString };
-    this.smlDom.buildDom(this.root, appTree);
+    this.render();
+    console.log(this.tree);
+    this.smlDom.buildDom(this.root, this.tree);
     this.afterViewInit();
-
   }
 
   loadComponents(...components) {

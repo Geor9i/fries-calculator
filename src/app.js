@@ -26,7 +26,7 @@ class App extends SMLComponent {
     <p class=${getClass}>${text}</p>
     <Input>
     <p class="red">Hello Sijan</p>
-    <p style="box-shadow: 1px 0 5px">SML Child</p>
+    <p style="box-shadow: 1px 0 10px">SML Child</p>
     </Input>
     `;
   }

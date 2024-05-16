@@ -4,7 +4,7 @@ import {
   smlTags,
   validHTMLElements,
 } from "./constants/constants.js";
-import SmlElement from "./smlElement.js";
+import { SmlElement } from "./smlElement.js";
  class SML {
   constructor() {
     this.selfClosingTags = selfClosingTags;
@@ -14,7 +14,7 @@ import SmlElement from "./smlElement.js";
     this.components = [];
   }
 
-  stringToTree({ htmlString, placeHolders }, options) {
+  stringToTree({ htmlString, placeHolders, ...options }) {
     // if the string contains no html return the text
     if (!htmlString.match(this.regex.element)) {
         return /^\s+$/g.test(htmlString) ? [] : [htmlString];
@@ -152,7 +152,9 @@ import SmlElement from "./smlElement.js";
 
       }
       const isSmlTag = this.smlTags.includes(parent.open.name);
-      let tagNode = new SmlElement(parent.open.name);
+      const isComponent = !this.validHTMLElements.includes(parent.open.name) && !isSmlTag;
+      let tagNode = isComponent ? { type: parent.open.name, tree: [], attributes: {}, children: [] } :
+      new SmlElement(parent.open.name, {}, [], options.parentComponent);
      
       const tagProps = placeHolders.filter(
         (entry) =>
@@ -219,20 +221,22 @@ import SmlElement from "./smlElement.js";
         }
       }
 
-      if (!this.validHTMLElements.includes(parent.open.name) && !isSmlTag) { //? If component
+      if (isComponent) {
         const storedComponent = this.components.find(
           (entry) => entry.name === tagNode.type
         );
         if (!storedComponent) {
           throw new Error(`${tagNode.type} is not a known Component!`);
         }
-          const instance = new storedComponent.component(tagNode.attributes);
-          instance.tree = this.stringToTree(instance.render(), { parentComponent: tagNode });
+          const instance = new storedComponent.component();
+          instance.attributes = tagNode.attributes;
+          instance.children = tagNode.children;
+          instance.render();
           
         tagNode = { ...tagNode, instance };
       }
 
-      if (isSmlTag && options.parentComponent) {
+      if (isSmlTag && options?.parentComponent) {
           const { children } = options.parentComponent;
           if (children && tagNode.type === 'sml-content') {
             tagTree.push(...children);
