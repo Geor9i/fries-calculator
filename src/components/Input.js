@@ -9,6 +9,11 @@ export default class Input extends SMLComponent {
         this.title = `On Init Title`;
     }
 
+    afterViewInit() {
+        const section = this.tree[0];
+        console.log(section);
+    }
+
     render() {
         const p = 'This is a paragraph';
         return this.m `

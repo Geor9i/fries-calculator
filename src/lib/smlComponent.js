@@ -1,5 +1,6 @@
 import { sml } from "./sml.js";
 import { smlDom } from "./smlDom.js";
+import SmlElement from "./smlElement.js";
 import ObjectUtil from "./utils/objectUtil.js";
 
 export default class SMLComponent {
@@ -63,10 +64,17 @@ export default class SMLComponent {
 
   entry(rootElement) {
 
+    const element = new SmlElement('div', {class: {red: 'blue'}}, []);
+    let car = {color: 'red', type: 'suv'}
+    element.attributes.vehicle = car
+    car.color = 'blue'
 
-    const obj = {
+    const nums = [1,2,3,4]
+
+    const obj1 = {
       name: 'mimi',
-      age: 16
+      age: 16,
+      nums: [1, 2, 3]
     }
 
     const obj2 = {
@@ -76,7 +84,7 @@ export default class SMLComponent {
     }
 
 
-    const test1 = obj;
+    const test1 = obj1;
     const test2 = obj2;
     const result = this.objectUtil.compare(test1, test2, {log:true, fullReport: true, types:true})
     console.log(result);
@@ -86,9 +94,10 @@ export default class SMLComponent {
     this.setRoot(rootElement);
     const  { htmlString, placeHolders } = this.render();
     this.tree = this.sml.stringToTree({ htmlString, placeHolders });
-    const appTree = { isComponent: true, instance: this, string: htmlString };
+    const appTree = { instance: this, string: htmlString };
     this.smlDom.buildDom(this.root, appTree);
     this.afterViewInit();
+
   }
 
   loadComponents(...components) {

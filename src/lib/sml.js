@@ -4,7 +4,7 @@ import {
   smlTags,
   validHTMLElements,
 } from "./constants/constants.js";
-
+import SmlElement from "./smlElement.js";
  class SML {
   constructor() {
     this.selfClosingTags = selfClosingTags;
@@ -152,12 +152,7 @@ import {
 
       }
       const isSmlTag = this.smlTags.includes(parent.open.name);
-      let tagNode = {
-        type: parent.open.name,
-        isComponent: !this.validHTMLElements.includes(parent.open.name) && !isSmlTag,
-        attributes: {},
-        children: [],
-      }
+      let tagNode = new SmlElement(parent.open.name);
      
       const tagProps = placeHolders.filter(
         (entry) =>
@@ -224,16 +219,16 @@ import {
         }
       }
 
-      if (tagNode.isComponent) {
+      if (!this.validHTMLElements.includes(parent.open.name) && !isSmlTag) { //? If component
         const storedComponent = this.components.find(
           (entry) => entry.name === tagNode.type
         );
         if (!storedComponent) {
           throw new Error(`${tagNode.type} is not a known Component!`);
         }
-        const instance = new storedComponent.component(tagNode.attributes);
-        instance.tree = this.stringToTree(instance.render(), { parentComponent: tagNode });
-        instance.afterViewInit();
+          const instance = new storedComponent.component(tagNode.attributes);
+          instance.tree = this.stringToTree(instance.render(), { parentComponent: tagNode });
+          
         tagNode = { ...tagNode, instance };
       }
 

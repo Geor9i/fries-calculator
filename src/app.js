@@ -9,7 +9,7 @@ import DependencyHub from "./dependencyResolvers/dependencyHub.js";
 import SMLComponent from "./lib/smlComponent.js";
 import Input from "./components/Input.js";
 import Test from "./components/test.js";
-
+ 
 // const options = DependencyHub.provide(Options);
 // const friesCalculator = DependencyHub.provide(FriesCalculator);
 // const resultsDisplay = DependencyHub.provide(ResultsDisplay);
@@ -25,6 +25,7 @@ class App extends SMLComponent {
     <h1 class="title">Fries calculator</h1>
     <p class=${getClass}>${text}</p>
     <Input>
+    <p class="red">Hello Sijan</p>
     <p style="box-shadow: 1px 0 5px">SML Child</p>
     </Input>
     `;

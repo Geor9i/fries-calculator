@@ -146,8 +146,8 @@ export default class ObjectUtil {
     const isArray = (type) => type === 'array';
     const isMap = (type) => ['map', 'weakmap'].includes(type);
     const isSet = (type) => ['set', 'weakset'].includes(type);
-    const objName = (obj) => Object.keys(obj).slice(0, 3).join(', ') + `${Object.keys(obj).length > 3 ? '...' : ''}`;
-    const arrName = (arr) => arr.slice(0, 3).join(', ') + `${arr.length > 3 ? '...' : ''}`;
+    const objName = (obj) => `{ ${Object.keys(obj).slice(0, 3).join(', ') + `${Object.keys(obj).length > 3 ? '...' : ''}`} }`;
+    const arrName = (arr) =>`[ ${ arr.slice(0, 3).join(', ') + `${arr.length > 3 ? '...' : ''}`} ]`;
     const placeHolder = (type, value, key) => {
       const placeholders = {
         object: `{ ${key} }`,
@@ -160,14 +160,18 @@ export default class ObjectUtil {
         number: `$ ${value}`,
         string: `"${value}"`,
         null: `${type}`,
-        boolean: `${value}`,
+        boolean: `${key}: ${value}`,
       }
+
+      if (!placeHolder[type]) {
+        return `${key}`
+      } 
       return placeholders[type]
     }
     const config = {
       indent: 0,
       index: null,
-      map: '',
+      map: 'Root',
       invalid: false
     }
 
@@ -200,9 +204,12 @@ export default class ObjectUtil {
             [iteratorA, iteratorB ]= [Array.from(a), Array.from(b)];
             }
 
+            if (a !== b) {
+              config.map += ` | !== Ref`;
+            }
+
             if ((iteratorA?.length ?? a?.size) !== (iteratorB?.length ?? b?.size)) {
-              config.map += "\n";
-              config.map += `└─── ${placeHolder(aType, a, 'a')} !== ${placeHolder(bType, b, 'b')} | length diff: ${Math.abs((iteratorA?.length ?? a?.size) - (iteratorB?.length ?? b?.size))}`;
+              config.map += ` | ${placeHolder(aType, a, 'a')} !== ${placeHolder(bType, b, 'b')} | length diff: ${Math.abs((iteratorA?.length ?? a?.size) - (iteratorB?.length ?? b?.size))}`;
               globalStructureMatch = false;
               globalReferenceMatch = false;
               config.invalid = true;
@@ -217,9 +224,11 @@ export default class ObjectUtil {
               config.map += "\n";
               const indexItemTypeA = parentIsObject ? this.typeof(Object.values(a)[i]) : parentIsMap ? this.typeof(a.get(Array.from(a)[i][0])) : this.typeof(iteratorA[i]);
               const indexItemTypeB = parentIsObject ? this.typeof(Object.values(b)[i]) : parentIsMap ? this.typeof(b.get(Array.from(b)[i][0])) : this.typeof(iteratorB[i]);
-              const nameA = isObject(indexItemTypeA) ? objName(iteratorA[i]) : isArray(indexItemTypeA) ? arrName(Object.values(a)[i]) : iteratorA[i];
-              const nameB = isObject(indexItemTypeB) ? objName(iteratorB[i]) : isArray(indexItemTypeB) ? arrName(Object.values(b)[i]) : iteratorB[i];
-              if (options?.exclude &&  nameA === nameB && options?.exclude.includes(nameA)) {
+              let nameA = isObject(indexItemTypeA) ? iteratorA[i] : isArray(indexItemTypeA) ? arrName(Object.values(a)[i]) : iteratorA[i];
+              nameA = isObject(this.typeof(nameA)) ? objName(nameA) : nameA;
+              let nameB = isObject(indexItemTypeB) ? iteratorB[i] : isArray(indexItemTypeB) ? arrName(Object.values(b)[i]) : iteratorB[i];
+              nameB = isObject(this.typeof(nameB)) ? objName(nameB) : nameB;
+              if (options?.exclude && nameA === nameB && options?.exclude.includes(nameA)) {
                 continue;
               }
               const valueA = parentIsObject ? a[iteratorA[i]] : parentIsMap ? a.get(Array.from(a)[i][0]) : iteratorA[i];
@@ -246,7 +255,7 @@ export default class ObjectUtil {
               config.map += '│   '.repeat(config.indent);
               config.map += `${i === iterations.length - 1 ? '└───' : '├───'} ${referenceMatch && valueMatch ?
                 `${placeHolder(indexItemTypeA, valueA, nameA)}  ${options?.types ? `--> ${indexItemTypeA} ` : ''}` : `${placeHolder(indexItemTypeA, valueA, nameA)} ${valueMatch? "==" : "!=="} ${
-                  placeHolder(indexItemTypeB, valueB, nameB)} ${!referenceMatch ? '| !== Ref' : ''} ${!valueMatch ? `| i: ${i || config.index || ''}` : ''}`}`;
+                  placeHolder(indexItemTypeB, valueB, nameB)} ${!valueMatch ? `| i: ${i || config.index || ''}` : ''}`}`;
               config.map += depthConfig.map;
   
               if (!typeMatch || !valueMatch) {
