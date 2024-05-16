@@ -19,18 +19,8 @@ export default class SMLComponent {
     })
     this.isProcessing = false;
     this.changes.on('push', this._pushChanges.bind(this));
-    this._setupLink();
     this.onInit();
   }
-
-  static linkId = 0;
-  static getLinkId() {
-    return (SMLComponent.linkId++).toFixed(0);
-  }
-_setupLink() {
-  this._subscriberId = SMLComponent.getLinkId();
-  // this.smlLink.on('resetChanges', this._subscriberId, this._resetChanges.bind(this)) 
-}
 
   _pushChanges() {
     if (this.isProcessing) return;

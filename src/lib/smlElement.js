@@ -29,6 +29,8 @@ class SmlBaseElement {
             throw new Error('SML Elements must have a type!')
         }
         
+        this._attributesState = {};
+        this._childrenState = {};
 
         let _domLink = null;
         Object.defineProperty(this, 'ref', {
@@ -50,7 +52,13 @@ class SmlBaseElement {
 
         Object.defineProperty(this, 'alertComponent', {
             value(changePropKey) {
-                component.changes.push({component:this, changePropKey});
+                if (changePropKey === 'attributes') {
+                    component.changes.push({component:this, changePropKey, newState: {...this.attributes}, oldState: {...this._attributesState}});
+                    this._attributesState = { ...this.attributes };
+                } else if (changePropKey === 'children') {
+                    component.changes.push({component:this, changePropKey, newState: {...this.children}, oldState: {...this._childrenState}});
+                    this._childrenState = { ...this.children };
+                }
             },
             enumerable: false,
             writable: false,
@@ -71,8 +79,33 @@ class SmlBaseElement {
 export class SmlElement  extends SmlBaseElement {
 
 constructor (type, attributes = {}, children = [], parent) {
-    super(type, attributes = {}, children = [], parent)
+    super(type, attributes, children, parent);
+    this.classList = {
+        list: [],
+        add(...classNames) {
+            classNames.forEach(className => this.classList.list.includes(className) ? null : this.classList.list.push(className))
+        }, remove(...classNames) {
+            classNames.forEach(className => {
+                const index = this.classList.list.findIndex(name => name === className );
+                if (index !== -1 ) {
+                    this.classList.list.splice(index, 1)
+                } 
+                    
+            })
+        }
+    }
 }
+
+
+
+setAttribute(key, value) {
+    this.attributes = {
+        ...this.attributes,
+        [key]: value
+    }
+}
+
+
 }
 
 

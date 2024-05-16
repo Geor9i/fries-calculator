@@ -11,12 +11,20 @@ export default class Input extends SMLComponent {
     }
 
     onChanges() {
+        this.changes.forEach(change => {
+            const { newState, oldState } = change;
+            console.log({newState, oldState});
+        })
         console.log(this.changes);
     }
 
     afterViewInit() {
         const section = this.tree[0];
-        section.attributes = {...section.attribute, class: 'red'};
+
+        for (let i = 0;i < 10;i++) {
+            section.setAttribute('textContent', `${i}`)
+        }
+
     }
 
     render() {
