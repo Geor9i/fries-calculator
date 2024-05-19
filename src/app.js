@@ -23,11 +23,6 @@ class App extends SMLComponent {
 
     return this.m`
     <h1 class="title">Fries calculator</h1>
-    <p class=${getClass}>${text}</p>
-    <Input>
-    <p class="red">Hello Sijan</p>
-    <p style="box-shadow: 1px 0 10px">SML Child</p>
-    </Input>
     `;
   }
 }

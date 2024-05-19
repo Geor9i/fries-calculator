@@ -15,15 +15,18 @@ export default class Input extends SMLComponent {
             const { newState, oldState } = change;
             console.log({newState, oldState});
         })
-        console.log(this.changes);
+        // console.log(this.changes);
     }
 
     afterViewInit() {
         const section = this.tree[0];
+        // section.attributes = {color: 'red'}
+        // section.attributes = {color: 'green'}
+        // console.log(section);
 
-        for (let i = 0;i < 10;i++) {
-            section.setAttribute('textContent', `${i}`)
-        }
+        // for (let i = 0;i < 10;i++) {
+        //     section.setAttribute('textContent', `${i}`)
+        // }
 
     }
 

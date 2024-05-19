@@ -1,27 +1,5 @@
 import WatcherArray from "./utils/watcherArray.js";
 
-function turnReactive(target, key, value, {getters = [], setters = []} = {}) {
-
-    Object.defineProperty(target, key, {
-        
-        get() {
-            getters.forEach(callback => {
-                if (typeof callback !== 'function') return;
-                callback()
-            })
-            return value
-        },
-        set(newValue) {
-            setters.forEach(callback => {
-                if (typeof callback !== 'function') return;
-                callback()
-            })
-            value = newValue
-        },
-        enumerable: true
-    })
-}
-
 class SmlBaseElement {
 
     constructor(type, attributes = {}, children = [], component) {
@@ -29,8 +7,8 @@ class SmlBaseElement {
             throw new Error('SML Elements must have a type!')
         }
         
-        this._attributesState = {};
-        this._childrenState = {};
+        this._attributesState = { ...attributes } || {};
+        this._childrenState = [...children] || [];
 
         let _domLink = null;
         Object.defineProperty(this, 'ref', {
@@ -67,8 +45,8 @@ class SmlBaseElement {
 
         this.type = type;
         this.children = new WatcherArray(...children || []);
-        this.children.on('push', this.alertComponent.bind(this, 'children'))
-        this.turnReactive(this, 'attributes', (attributes || {}), {setters: [this.alertComponent.bind(this, 'attributes')]});
+        this.children.on('push', this.alertComponent.bind(this, 'children'));
+        this.attributes = attributes || {};
         this.component = component;
     }
 

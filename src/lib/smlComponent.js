@@ -3,6 +3,7 @@ import { smlDom } from "./smlDom.js";
 import { smlLink } from "./smlLink.js";
 import ObjectUtil from "./utils/objectUtil.js";
 import WatcherArray from "./utils/watcherArray.js";
+import WatcherObject from "./utils/watcherObj.js";
 
 export default class SMLComponent {
   constructor() {
