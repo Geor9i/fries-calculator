@@ -1,6 +1,9 @@
 export default class WatcherObject {
-  constructor() {
-    Object.defineProperty(this, 'events', {enumerable: false, value: {}});
+  constructor(object = {}) {
+    this.target = object;
+    Object.defineProperty(this.target, 'emit', {enumerable: false, value: this.emit});
+    Object.defineProperty(this.target, 'on', {enumerable: false, value: this.on});
+    Object.defineProperty(this.target, 'events', {enumerable: false, value: {}});
     const handler = {
       set: (target, prop, value, receiver) => {
         const oldValue = target[prop];
@@ -24,7 +27,7 @@ export default class WatcherObject {
         return result;
       }
   }
-  return new Proxy(this, handler);
+  return new Proxy(this.target, handler);
 }
 emit(eventName, data = null) {
   if (this.events.hasOwnProperty(eventName)) {
@@ -44,9 +47,6 @@ on(eventName, callback) {
     };
 }
 
-reset() {
-  this.length = 0;
-}
 }
 
 

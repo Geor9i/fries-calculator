@@ -15,25 +15,26 @@ export default class SMLComponent {
     Object.defineProperty(this, 'renderMethod', { enumerable:  false, value: this.render });
     this.render = () => this.tree = this.renderMethod();
     Object.defineProperty(this, 'changes', {
+      value: [],
+      writable: true,
       enumerable:false,
-      value: new WatcherArray()
     })
-    this.isProcessing = false;
-    this.changes.on('push', this._pushChanges.bind(this));
+    this._isProcessing = true;
     this.onInit();
   }
 
-  _pushChanges() {
-    if (this.isProcessing) return;
-    this.isProcessing = true;
+  _logChange(change) {
+    this.changes.push(change);
+    if (this._isProcessing) return;
+    this._isProcessing = true;
     setTimeout(() => {
-      this.onChanges()
-      this.isProcessing = false;
+      this.onChanges(this.changes)
+      this._isProcessing = false;
     }, 0)
   }
 
   _resetChanges() {
-    this.changes.reset();
+    this.changes = [];
   }
 
 
@@ -87,7 +88,8 @@ export default class SMLComponent {
     this.setRoot(rootElement);
     this.render();
     console.log(this.tree);
-    this._resetChanges();
+    // this._resetChanges();
+    this._isProcessing = false;
     this.smlDom.buildDom(this.root, this.tree);
     this.afterViewInit();
   }

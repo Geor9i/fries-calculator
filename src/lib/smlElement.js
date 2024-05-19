@@ -1,4 +1,5 @@
 import WatcherArray from "./utils/watcherArray.js";
+import WatcherObject from "./utils/watcherObj.js";
 
 class SmlBaseElement {
 
@@ -9,7 +10,28 @@ class SmlBaseElement {
         
         this._attributesState = { ...attributes } || {};
         this._childrenState = [...children] || [];
+        this.type = type;
+        this.component = component;
+        this.children = new WatcherArray(...children || []);
+        this.attributes = new WatcherObject(attributes || {});
 
+        Object.defineProperty(this, 'onComponentTreeChange', {
+            value(changePropKey) {
+                if (changePropKey === 'attributes') {
+                    component._logChange({newState: {...this.attributes}, oldState: {...this._attributesState}}) 
+                    this._attributesState = { ...this.attributes };
+                } else if (changePropKey === 'children') {
+                    component._logChange({newState: {...this.children}, oldState: {...this._childrenState}}) 
+                    this._childrenState = { ...this.children };
+                }
+            },
+            enumerable: false,
+            writable: false,
+            configurable: false
+        })
+
+        this.children.on('change', this.onComponentTreeChange.bind(this, 'children'));
+        this.attributes.on('propertyChange', this.onComponentTreeChange.bind(this, 'attributes'));
         let _domLink = null;
         Object.defineProperty(this, 'ref', {
             get() {
@@ -20,34 +42,6 @@ class SmlBaseElement {
             },
             enumerable: false
         })
-
-        Object.defineProperty(this, 'turnReactive', {
-            get() {
-                return turnReactive;
-            },
-            enumerable: false
-        })
-
-        Object.defineProperty(this, 'alertComponent', {
-            value(changePropKey) {
-                if (changePropKey === 'attributes') {
-                    component.changes.push({component:this, changePropKey, newState: {...this.attributes}, oldState: {...this._attributesState}});
-                    this._attributesState = { ...this.attributes };
-                } else if (changePropKey === 'children') {
-                    component.changes.push({component:this, changePropKey, newState: {...this.children}, oldState: {...this._childrenState}});
-                    this._childrenState = { ...this.children };
-                }
-            },
-            enumerable: false,
-            writable: false,
-            configurable: false
-        })
-
-        this.type = type;
-        this.children = new WatcherArray(...children || []);
-        this.children.on('push', this.alertComponent.bind(this, 'children'));
-        this.attributes = attributes || {};
-        this.component = component;
     }
 
    
@@ -58,32 +52,40 @@ export class SmlElement  extends SmlBaseElement {
 
 constructor (type, attributes = {}, children = [], parent) {
     super(type, attributes, children, parent);
+
+    const attributesRef = this.attributes;
     this.classList = {
-        list: [],
         add(...classNames) {
-            classNames.forEach(className => this.classList.list.includes(className) ? null : this.classList.list.push(className))
-        }, remove(...classNames) {
-            classNames.forEach(className => {
-                const index = this.classList.list.findIndex(name => name === className );
-                if (index !== -1 ) {
-                    this.classList.list.splice(index, 1)
-                } 
-                    
+            const classStringArr = (attributesRef?.class || '').split(' ');
+            classNames.forEach(newClassName => {
+            const classExists = classStringArr.some(className => className === newClassName);
+                if (!classExists) {
+                    classStringArr.push(newClassName);
+                }
             })
+            attributesRef.class = classStringArr.filter(str => str.length).join(' ');
+        }, remove(...classNames) {
+            let classStringArr = (attributesRef?.class || '').split(' ');
+            classNames.forEach(removeClassName => {
+            const classIndex = classStringArr.findIndex(className => className === removeClassName);
+                if (classIndex) {
+                    classStringArr = classNames.slice(0, classIndex).concat(classNames.slice(classIndex + 1));
+                }
+            })
+            attributesRef.class = classStringArr.join(' ');
         }
     }
+
+    Object.defineProperty(this.classList, 'list', {
+        get() {
+            return this.attributes?.class || '';
+        }
+    })
 }
-
-
 
 setAttribute(key, value) {
-    this.attributes = {
-        ...this.attributes,
-        [key]: value
-    }
+    this.attributes[key] = value;
 }
-
-
 }
 
 

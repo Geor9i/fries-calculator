@@ -16,6 +16,15 @@ import Test from "./components/test.js";
 
 class App extends SMLComponent {
 
+    afterViewInit() {
+        const element = this.tree[0];
+        console.log(element.classList.add('red'));
+    }
+
+    onChanges(changes) {
+       
+        console.log(changes);
+    }
 
   render() {
     const text = 'This is some text';

@@ -5,6 +5,7 @@ import {
   validHTMLElements,
 } from "./constants/constants.js";
 import { SmlElement } from "./smlElement.js";
+import WatcherArray from "./utils/watcherArray.js";
  class SML {
   constructor() {
     this.selfClosingTags = selfClosingTags;
@@ -233,6 +234,7 @@ import { SmlElement } from "./smlElement.js";
           instance.children = tagNode.children;
           instance.render();
           instance._resetChanges();
+          this._isProcessing = false;
           
         tagNode = { ...tagNode, instance };
       }
