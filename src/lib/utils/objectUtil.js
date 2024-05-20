@@ -63,6 +63,64 @@ export default class ObjectUtil {
     return split(arr, callback);
 }
 
+deepCopy(obj) {
+  const refMap = new WeakMap();
+  const copy = (obj) => {
+    const objType = this.typeof(obj);
+    if (['number', 'string', 'boolean', 'null', 'undefined'].includes(objType)) {
+      return obj;
+    } else if (['regexp', 'date'].includes(objType)) {
+      const select = {
+        date: new Date(obj),
+        regexp: new RegExp(obj)
+      }
+      return select[obj];
+    }
+
+    if (refMap.has(obj)) {
+      return refMap.get(obj);
+    }
+
+    const selectType = {
+      array:[],
+      object: {},
+      map: new Map(),
+      weakmap: new WeakMap(),
+      set: new Set(),
+      weakset: new WeakSet(),
+     
+    }
+    const copyObj = selectType[objType];
+    refMap.set(obj, copyObj);
+
+    let iterator
+
+    if (objType === 'object') {
+      iterator = Object.keys(obj);
+    } else if (['map', 'weakmap'].includes(objType)) {
+      iterator = obj.entries();
+    } else {
+      iterator = Array.from(obj);
+    }
+
+    for (let i = 0; i < iterator.length; i++) {
+      const indexer = ['map', 'weakmap', 'object'].includes(objType) ? iterator[i] : i;
+      const indexItem = objType === 'object' ? obj[indexer] : ['map', 'weakmap'].includes(objType) ? obj.get(indexer[0]) : iterator[indexer];
+      const item = this.deepCopy(indexItem);
+      if (objType === 'map') {
+          copyObj.set(indexer, copy(item));
+      } else if (objType === 'set') {
+          copyObj.add(copy(item));
+      } else {
+        copyObj[indexer] = item;
+      }
+    }
+    return copyObj
+  }
+let objCopy = copy(obj);
+  return objCopy
+}
+
 
   iterate(data, callback) {
     if (Array.isArray(data)) {

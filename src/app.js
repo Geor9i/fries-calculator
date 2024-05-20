@@ -18,12 +18,14 @@ class App extends SMLComponent {
 
     afterViewInit() {
         const element = this.tree[0];
-        console.log(element.classList.add('red'));
+        console.log('old tree: ', this.treeState);
+        element.classList.add('blue')
+        console.log('new tree: ', this.tree);
+        // console.log(element);
     }
 
     onChanges(changes) {
        
-        console.log(changes);
     }
 
   render() {

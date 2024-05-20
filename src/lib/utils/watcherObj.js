@@ -17,7 +17,6 @@ export default class WatcherObject {
         }
        
         Reflect.set(target, prop, value, receiver)
-        console.log('set directly');
         target.emit('propertyChange', { property: prop, value });
         return true;
       },

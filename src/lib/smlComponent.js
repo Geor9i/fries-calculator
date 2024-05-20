@@ -2,18 +2,19 @@ import { sml } from "./sml.js";
 import { smlDom } from "./smlDom.js";
 import { smlLink } from "./smlLink.js";
 import ObjectUtil from "./utils/objectUtil.js";
-import WatcherArray from "./utils/watcherArray.js";
-import WatcherObject from "./utils/watcherObj.js";
-
 export default class SMLComponent {
   constructor() {
     this.state = {};
     this.smlDom = smlDom;
     this.sml = sml;
+    this.treeState = [];
     this.objectUtil = new ObjectUtil();
     this.smlLink = smlLink;
     Object.defineProperty(this, 'renderMethod', { enumerable:  false, value: this.render });
-    this.render = () => this.tree = this.renderMethod();
+    this.render = () => {
+      this.tree = this.renderMethod();
+      this.treeState = [...this.tree];
+    };
     Object.defineProperty(this, 'changes', {
       value: [],
       writable: true,
@@ -28,9 +29,20 @@ export default class SMLComponent {
     if (this._isProcessing) return;
     this._isProcessing = true;
     setTimeout(() => {
-      this.onChanges(this.changes)
+      this.onChanges(this.changes);
+      this._reRender();
       this._isProcessing = false;
     }, 0)
+  }
+
+  _setTree() {
+
+  }
+
+  _reRender() {
+    console.log(this.tree);
+    console.log(this.treeState);
+    console.log(this.changes);
   }
 
   _resetChanges() {
@@ -85,13 +97,33 @@ export default class SMLComponent {
   }
 
   entry(rootElement) {
-    this.setRoot(rootElement);
-    this.render();
-    console.log(this.tree);
+
+    const complexObject = {
+      name: "Complex Object",
+      data: {
+        numbers: [1, 2, 3],
+        nested: {
+          foo: "bar",
+          baz: [4, 5, { qux: "quux" }]
+        }
+      },
+      createdAt: new Date(),
+      pattern: /abc/gi,
+      greet: function() {
+        return `Hello, ${this.name}`;
+      }
+    };
+
+    
+
+
+
+    // this.setRoot(rootElement);
+    // this.render();
     // this._resetChanges();
-    this._isProcessing = false;
-    this.smlDom.buildDom(this.root, this.tree);
-    this.afterViewInit();
+    // this._isProcessing = false;
+    // this.smlDom.buildDom(this.root, this.tree);
+    // this.afterViewInit();
   }
 
   loadComponents(...components) {

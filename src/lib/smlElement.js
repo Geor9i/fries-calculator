@@ -21,8 +21,8 @@ class SmlBaseElement {
                     component._logChange({newState: {...this.attributes}, oldState: {...this._attributesState}}) 
                     this._attributesState = { ...this.attributes };
                 } else if (changePropKey === 'children') {
-                    component._logChange({newState: {...this.children}, oldState: {...this._childrenState}}) 
-                    this._childrenState = { ...this.children };
+                    component._logChange({newState: [...this.children], oldState: [...this._childrenState]}) 
+                    this._childrenState = [ ...this.children ];
                 }
             },
             enumerable: false,
