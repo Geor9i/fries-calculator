@@ -13,7 +13,7 @@ export default class SMLComponent {
     Object.defineProperty(this, 'renderMethod', { enumerable:  false, value: this.render });
     this.render = () => {
       this.tree = this.renderMethod();
-      this.treeState = [...this.tree];
+      this.treeState = this.objectUtil.deepCopy(this.tree);
     };
     Object.defineProperty(this, 'changes', {
       value: [],
@@ -40,9 +40,10 @@ export default class SMLComponent {
   }
 
   _reRender() {
-    console.log(this.tree);
-    console.log(this.treeState);
-    console.log(this.changes);
+    console.log('tree: ', this.tree);
+    console.log('tree copy: ', this.treeState);
+    this.objectUtil.compare(this.tree, this.treeState, {fullReport: true, log:true, types: true})
+    console.log(this.tree === this.treeState);
   }
 
   _resetChanges() {
@@ -97,33 +98,12 @@ export default class SMLComponent {
   }
 
   entry(rootElement) {
-
-    const complexObject = {
-      name: "Complex Object",
-      data: {
-        numbers: [1, 2, 3],
-        nested: {
-          foo: "bar",
-          baz: [4, 5, { qux: "quux" }]
-        }
-      },
-      createdAt: new Date(),
-      pattern: /abc/gi,
-      greet: function() {
-        return `Hello, ${this.name}`;
-      }
-    };
-
-    
-
-
-
-    // this.setRoot(rootElement);
-    // this.render();
-    // this._resetChanges();
-    // this._isProcessing = false;
-    // this.smlDom.buildDom(this.root, this.tree);
-    // this.afterViewInit();
+    this.setRoot(rootElement);
+    this.render();
+    this._resetChanges();
+    this._isProcessing = false;
+    this.smlDom.buildDom(this.root, this.tree);
+    this.afterViewInit();
   }
 
   loadComponents(...components) {

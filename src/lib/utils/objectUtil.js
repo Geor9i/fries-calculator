@@ -67,20 +67,19 @@ deepCopy(obj) {
   const refMap = new WeakMap();
   const copy = (obj) => {
     const objType = this.typeof(obj);
-    if (['number', 'string', 'boolean', 'null', 'undefined'].includes(objType)) {
+    if (['number', 'string', 'boolean', 'null', 'undefined', 'function'].includes(objType)) {
       return obj;
     } else if (['regexp', 'date'].includes(objType)) {
       const select = {
         date: new Date(obj),
         regexp: new RegExp(obj)
       }
-      return select[obj];
+      return select[objType];
     }
 
     if (refMap.has(obj)) {
       return refMap.get(obj);
     }
-
     const selectType = {
       array:[],
       object: {},
@@ -98,21 +97,26 @@ deepCopy(obj) {
     if (objType === 'object') {
       iterator = Object.keys(obj);
     } else if (['map', 'weakmap'].includes(objType)) {
-      iterator = obj.entries();
+      iterator = Array.from(obj.entries());
     } else {
       iterator = Array.from(obj);
     }
 
     for (let i = 0; i < iterator.length; i++) {
-      const indexer = ['map', 'weakmap', 'object'].includes(objType) ? iterator[i] : i;
-      const indexItem = objType === 'object' ? obj[indexer] : ['map', 'weakmap'].includes(objType) ? obj.get(indexer[0]) : iterator[indexer];
-      const item = this.deepCopy(indexItem);
+      const indexer = objType === 'object' ? iterator[i] : ['map', 'weakmap'].includes(objType) ? iterator[i][0] : i;
+      const indexItem = objType === 'object' ? obj[indexer] : ['map', 'weakmap'].includes(objType) ? iterator[i][1] : iterator[indexer];
+     let copyItem;
+      if (typeof indexItem === 'object' && refMap.has(indexItem)) {
+        copyItem = refMap.get(indexItem);
+      }else {
+        copyItem = copy(indexItem);
+      }
       if (objType === 'map') {
-          copyObj.set(indexer, copy(item));
+          copyObj.set(indexer, copyItem);
       } else if (objType === 'set') {
-          copyObj.add(copy(item));
+          copyObj.add(copyItem);
       } else {
-        copyObj[indexer] = item;
+        copyObj[indexer] = copyItem;
       }
     }
     return copyObj
@@ -234,7 +238,7 @@ let objCopy = copy(obj);
     }
 
     const analyze = (a, b, config) => {
-      const aType =   this.typeof(a);
+      const aType = this.typeof(a);
       const bType = this.typeof(b);
 
       if (aType === bType) {
@@ -245,7 +249,7 @@ let objCopy = copy(obj);
           if(isPrimitive(aType)){
             let valueMatch = a === b;
             config.map += "\n";
-            config.map += `└─── ${valueMatch ? `${a}` : `${a} (${aType}) !== ${b} (${bType})`}`
+            config.map += `└───${valueMatch ? `${a}` : `${a} (${aType}) !== ${b} (${bType})`}`
             globalStructureMatch = globalStructureMatch ? valueMatch : globalStructureMatch;
             return valueMatch;
           } else if (isIterable(aType)) {
@@ -331,7 +335,7 @@ let objCopy = copy(obj);
           }
         }
       } else {
-        config.map += `└─── ${placeHolder(aType, a, a)} !== ${placeHolder(bType, b, b)}`;
+        config.map += `└───${placeHolder(aType, a, a)} !== ${placeHolder(bType, b, b)}`;
         globalStructureMatch = false;
         config.invalid = true;
         return config;

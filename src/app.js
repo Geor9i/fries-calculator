@@ -18,9 +18,7 @@ class App extends SMLComponent {
 
     afterViewInit() {
         const element = this.tree[0];
-        console.log('old tree: ', this.treeState);
         element.classList.add('blue')
-        console.log('new tree: ', this.tree);
         // console.log(element);
     }
 

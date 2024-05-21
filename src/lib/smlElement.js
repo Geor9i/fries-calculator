@@ -8,10 +8,10 @@ class SmlBaseElement {
             throw new Error('SML Elements must have a type!')
         }
         
-        this._attributesState = { ...attributes } || {};
-        this._childrenState = [...children] || [];
+        Object.defineProperty(this, '_attributesState', {enumerable: false, writable: true, value: { ...attributes } || {}})
+        Object.defineProperty(this, '_childrenState', {enumerable: false, writable: true, value:  [...children] || []})
+        Object.defineProperty(this, 'component', {enumerable: false, writable: true, value:  component})
         this.type = type;
-        this.component = component;
         this.children = new WatcherArray(...children || []);
         this.attributes = new WatcherObject(attributes || {});
 
