@@ -1,3 +1,4 @@
+import { objectUtil } from "./utils/objectUtil.js";
 import WatcherArray from "./utils/watcherArray.js";
 import WatcherObject from "./utils/watcherObj.js";
 
@@ -7,12 +8,14 @@ class SmlBaseElement {
         if (!type) {
             throw new Error('SML Elements must have a type!')
         }
-        
-        Object.defineProperty(this, '_attributeChanges', {enumerable: false, writable: true, value: new Set()})
-        Object.defineProperty(this, '_childrenChanges', {enumerable: false, writable: true, value: []})
-        Object.defineProperty(this, '_previousAttributesState', {enumerable: false, writable: true, value: { ...attributes } || {}})
-        Object.defineProperty(this, '_previousChildrenState', {enumerable: false, writable: true, value:  [...children] || []})
-        Object.defineProperty(this, 'component', {enumerable: false, writable: true, value:  component})
+        this.objectUtil = objectUtil;
+        this.objectUtil.defineProperty(this, [
+            ['_attributeChanges', new Set()],
+            ['_childrenChanges', []],
+            ['_previousAttributesState', { ...attributes } || {}],
+            ['_previousChildrenState', [...children] || []],
+            ['component', component],
+        ], {e: false, w: true})
         this.type = type;
         this.children = new WatcherArray(...children || []);
         this.attributes = new WatcherObject(attributes || {});

@@ -1,4 +1,4 @@
-import ObjectUtil from "./utils/objectUtil.js";
+import { objectUtil } from "./utils/objectUtil.js";
 import {
   selfClosingTags,
 } from "./constants/constants.js";
@@ -8,7 +8,7 @@ class SMLDOM {
   constructor() {
     this.selfClosingTags = selfClosingTags;
     this.components = null;
-    this.objectUtil = new ObjectUtil();
+    this.objectUtil = objectUtil;
   }
 
 

@@ -1,4 +1,4 @@
-import ObjectUtil from "./utils/objectUtil.js";
+import { objectUtil } from "./utils/objectUtil.js";
 import { sml } from "./sml.js";
 import { smlDom } from "./smlDom.js";
 import { smlLink } from "./smlLink.js"
@@ -6,12 +6,12 @@ import { smlLink } from "./smlLink.js"
 export default class BaseSmlComponent {
     constructor() {
         // this.state = {};
-        this.objectUtil = new ObjectUtil();
+        this.objectUtil = objectUtil;
         this.objectUtil.defineProperty(this, [
         ['root', null],
         ['treeState', []],
         ['events', {}],
-        ['changes', []]
+        ['changes', []],
         ['smlDom', smlDom],
         ['sml', sml],
         ['smlLink', smlLink],

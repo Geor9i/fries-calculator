@@ -1,5 +1,5 @@
 
-export default class ObjectUtil {
+class ObjectUtil {
 
   includes(data, target) {
     let dataType = this.typeof(data);
@@ -708,3 +708,4 @@ let objCopy = copy(obj);
   }
 }
 
+export const objectUtil = new ObjectUtil();
