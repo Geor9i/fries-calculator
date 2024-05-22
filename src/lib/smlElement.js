@@ -16,7 +16,8 @@ class SmlBaseElement {
             ['_previousChildrenState', [...children] || []],
             ['component', component],
             ['unsubscribeArr', []],
-            ['ref', null]
+            ['ref', null],
+            ['key', null],
         ], {e: false, w: true})
         this.type = type;
         this.children = new WatcherArray(...children || []);
@@ -33,18 +34,24 @@ class SmlBaseElement {
         Object.defineProperty(this, 'onElementChange', {
             value(changePropKey) {
                 if (changePropKey === 'attributes') {
-                    component._logChange({element: this, newState: {...this.attributes}, oldState: {...this._previousAttributesState}}) 
+                    component._logChange({element: this, newState: {...this.attributes}, oldState: {...this._previousAttributesState}}); 
                 } else if (changePropKey === 'children') {
-                    component._logChange({element: this, newState: [...this.children], oldState: [...this._previousChildrenState]}) 
+                    component._logChange({element: this, newState: [...this.children], oldState: [...this._previousChildrenState]});
                 }
             },
             enumerable: false,
             writable: false,
             configurable: false
         })
-
-        const childrenUnsubscribe = this.children.on('change', this.onElementChange.bind(this, 'children'));
-        const attributesUnsubscribe = this.attributes.on('propertyChange', this.onElementChange.bind(this, 'attributes'));
+        const childrenChangeHandler = (data) => {
+            this.onElementChange('children');
+        }
+        const childrenUnsubscribe = this.children.on('change', childrenChangeHandler.bind(this));
+        const attributesChangeHandler = (data) => {
+            data?.property ? this._attributeChanges.add(data.property) : null;
+            this.onElementChange('attributes');
+        }
+        const attributesUnsubscribe = this.attributes.on('propertyChange', attributesChangeHandler.bind(this));
         this.unsubscribeArr.push(childrenUnsubscribe, attributesUnsubscribe);
     }
 }

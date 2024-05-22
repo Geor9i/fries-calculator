@@ -5,23 +5,20 @@ export default class SMLComponent extends BaseSmlComponent {
     this.onInit();
   }
   _reRender() {
-    console.log(this.changes);
-    console.log('tree: ', this.tree);
-    console.log('tree copy: ', this.treeState);
+    // console.log(this.changes);
+    // console.log('tree: ', this.tree);
+    // console.log('tree copy: ', this.treeState);
     // this.objectUtil.compare(this.tree, this.treeState, { fullReport: true, log:true, types: true })
     // console.log(this.tree === this.treeState);
   }
 
-  _resetChanges() {
-    this.changes = [];
-  }
+  
 
   onInit() {}
 
   afterViewInit() {}
 
-  onChanges() {
-  }
+  
  
   m(stringsArr, ...values) {
     const placeHolders = [];

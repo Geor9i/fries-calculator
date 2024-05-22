@@ -16,7 +16,7 @@ import WatcherArray from "./utils/watcherArray.js";
   }
 
   stringToTree({ htmlString, placeHolders, ...options }) {
-    // if the string contains no html return the text
+    //? if the string contains no html return the text
     if (!htmlString.match(this.regex.element)) {
         return /^\s+$/g.test(htmlString) ? [] : [htmlString];
     }
@@ -129,7 +129,19 @@ import WatcherArray from "./utils/watcherArray.js";
   }
 
   buildTree(sortedTagPairs, htmlString, placeHolders, options) {
-    const tagTree = [];
+    const tagTree = new WatcherArray();
+    if (options?.parentComponent) {
+      const component = options.parentComponent;
+      const logChange = () => {
+        component._logChange({
+        message: 'Direct Component Tree Children Change',
+        newState: [...component.tree],
+        oldState: [...component.oldTreeState]
+      })
+      }
+      const unsubscribe = tagTree.on('change', logChange.bind(this));
+      component.unsubscribeArr.push(unsubscribe);
+    }
     const usedIndexes = {};
     let prevTagEndIndex = 0;
     let buildTreePartial = (parent) => {
@@ -152,10 +164,10 @@ import WatcherArray from "./utils/watcherArray.js";
       }
 
       }
-      const isSmlTag = this.smlTags.includes(parent.open.name);
-      const isComponent = !this.validHTMLElements.includes(parent.open.name) && !isSmlTag;
-      let tagNode = isComponent ? { type: parent.open.name, tree: [], attributes: {}, children: [] } :
-      new SmlElement(parent.open.name, {}, [], options.parentComponent);
+      const tagName = parent.open.name;
+      const isSmlTag = this.smlTags.includes(tagName);
+      const isComponent = !this.validHTMLElements.includes(tagName) && !isSmlTag;
+      let tagNode = isComponent ? { type: tagName, children: [], attributes: {} } : new SmlElement(tagName, {}, [], options.parentComponent);
       if (!isComponent) {
         const component = options.parentComponent;
         //? Reset attribute and children old state
@@ -243,9 +255,10 @@ import WatcherArray from "./utils/watcherArray.js";
           instance.children = tagNode.children;
           instance.render();
           instance._resetChanges();
-          this._isProcessing = false;
+          instance._isProcessing = false;
+          instance.afterViewInit();
           
-        tagNode = { ...tagNode, instance };
+          tagNode = { type: tagName, instance };
       }
 
       if (isSmlTag && options?.parentComponent) {

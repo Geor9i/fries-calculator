@@ -5,11 +5,14 @@ import { smlLink } from "./smlLink.js"
 
 export default class BaseSmlComponent {
     constructor() {
-        // this.state = {};
         this.objectUtil = objectUtil;
         this.objectUtil.defineProperty(this, [
         ['root', null],
-        ['treeState', []],
+        ['tree', []],
+        ['attributes', {}],
+        ['children', []],
+        ['oldTreeState', []],
+        ['unsubscribeArr', []],
         ['events', {}],
         ['changes', []],
         ['smlDom', smlDom],
@@ -46,21 +49,22 @@ export default class BaseSmlComponent {
               if (this._isProcessing) return;
               this._isProcessing = true;
               setTimeout(() => {
-                this.onChanges(this.changes);
+                this.onChanges([...this.changes]);
                 this._reRender();
                 this._isProcessing = false;
                 this.emit('doneProcessing');
               }, 0)
-              return this._isProcessing;
             }})
+        Object.defineProperty(this, '_resetChanges', {enumerable: false, value: () => this.changes = []})
         Object.defineProperty(this, 'renderMethod', { enumerable:  false, writable: false, value: this.render });
         this.render = () => {
           this.tree = this.renderMethod();
-          this.treeState = this.objectUtil.deepCopy(this.tree);
+          this.oldTreeState = this.objectUtil.deepCopy(this.tree);
         };
         Object.defineProperty(this, 'destroyMethod', { enumerable:  false, writable: false, value: this.onDestroy });
         this.onDestroy = () => {
-        //TODO Component destroy logic
+            //TODO Component destroy logic
+        this.unsubscribeArr.forEach(unsubscribe => unsubscribe());
           this.destroyMethod();
         };
           Object.defineProperty(this, 'entry', {enumerable: false, value(rootElement) {
@@ -84,6 +88,8 @@ export default class BaseSmlComponent {
         }
         onDestroy() {}
 
+        onChanges() {
+        }
 
         useState(initialValue) {
         const key = `${new Date().getTime()}`;

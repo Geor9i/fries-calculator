@@ -3,11 +3,15 @@ export default class WatcherArray extends Array {
     super();
     Object.defineProperty(this, 'events', {enumerable: false, value: {}});
     return new Proxy(this, {
-       set: (target, prop, value) => {
-        prop = isNaN(Number(prop)) ? prop : Number(prop)
-        super[prop] = value;
-        this.emit('change', { method: 'set', index: prop, value });
-        return true;
+      set: (target, prop, value, receiver) => {
+        const index = isNaN(Number(prop)) ? prop : Number(prop);
+        const isArrayIndex = typeof index === 'number' && index >= 0;
+        if (isArrayIndex && target[index] !== value) {
+          const result = Reflect.set(target, prop, value, receiver);
+          this.emit('change', { method: 'set', index, value });
+          return result;
+        }
+        return Reflect.set(target, prop, value, receiver);
       }
     });
   }

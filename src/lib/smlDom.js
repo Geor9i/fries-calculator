@@ -34,10 +34,7 @@ class SMLDOM {
       const { children, attributes, instance } = smlNode;
       if (instance?.hasOwnProperty('tree')) { //? If Component
         let componentFragment = document.createDocumentFragment();
-        instance.children = children;
-        instance.attributes = attributes;
         this.buildDom(componentFragment, instance.tree);
-        instance.afterViewInit();
         mainFragment.appendChild(componentFragment);
         return;
       }

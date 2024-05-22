@@ -18,12 +18,14 @@ class App extends SMLComponent {
 
     afterViewInit() {
         const element = this.tree[0];
+        element.children.push(2)
         element.classList.add('blue');
+        element.children.push(1)
         // console.log(element);
     }
 
     onChanges(changes) {
-       
+       console.log(changes);
     }
 
   render() {
