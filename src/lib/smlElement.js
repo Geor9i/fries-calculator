@@ -8,21 +8,23 @@ class SmlBaseElement {
             throw new Error('SML Elements must have a type!')
         }
         
-        Object.defineProperty(this, '_attributesState', {enumerable: false, writable: true, value: { ...attributes } || {}})
-        Object.defineProperty(this, '_childrenState', {enumerable: false, writable: true, value:  [...children] || []})
+        Object.defineProperty(this, '_attributeChanges', {enumerable: false, writable: true, value: new Set()})
+        Object.defineProperty(this, '_childrenChanges', {enumerable: false, writable: true, value: []})
+        Object.defineProperty(this, '_previousAttributesState', {enumerable: false, writable: true, value: { ...attributes } || {}})
+        Object.defineProperty(this, '_previousChildrenState', {enumerable: false, writable: true, value:  [...children] || []})
         Object.defineProperty(this, 'component', {enumerable: false, writable: true, value:  component})
         this.type = type;
         this.children = new WatcherArray(...children || []);
         this.attributes = new WatcherObject(attributes || {});
 
-        Object.defineProperty(this, 'onComponentTreeChange', {
+        Object.defineProperty(this, 'onElementChange', {
             value(changePropKey) {
                 if (changePropKey === 'attributes') {
-                    component._logChange({newState: {...this.attributes}, oldState: {...this._attributesState}}) 
-                    this._attributesState = { ...this.attributes };
+                    component._logChange({element: this, newState: {...this.attributes}, oldState: {...this._previousAttributesState}}) 
+                    this._previousAttributesState = { ...this.attributes };
                 } else if (changePropKey === 'children') {
-                    component._logChange({newState: [...this.children], oldState: [...this._childrenState]}) 
-                    this._childrenState = [ ...this.children ];
+                    component._logChange({element: this, newState: [...this.children], oldState: [...this._previousChildrenState]}) 
+                    this._previousChildrenState = [ ...this.children ];
                 }
             },
             enumerable: false,
@@ -30,8 +32,8 @@ class SmlBaseElement {
             configurable: false
         })
 
-        this.children.on('change', this.onComponentTreeChange.bind(this, 'children'));
-        this.attributes.on('propertyChange', this.onComponentTreeChange.bind(this, 'attributes'));
+        this.children.on('change', this.onElementChange.bind(this, 'children'));
+        this.attributes.on('propertyChange', this.onElementChange.bind(this, 'attributes'));
         let _domLink = null;
         Object.defineProperty(this, 'ref', {
             get() {
@@ -43,8 +45,6 @@ class SmlBaseElement {
             enumerable: false
         })
     }
-
-   
 
 }
 
@@ -85,6 +85,10 @@ constructor (type, attributes = {}, children = [], parent) {
 
 setAttribute(key, value) {
     this.attributes[key] = value;
+}
+
+removeAttribute(key) {
+    delete this.attributes[key];
 }
 }
 
