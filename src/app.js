@@ -20,13 +20,13 @@ class App extends SMLComponent {
         const element = this.tree[0];
         const div = this.m`<div></div>`;
         element.prependChild(div);
-        console.log(element);
+        // console.log(element);
         // console.log(div);
         // console.log(element);
     }
 
     onChanges(changes) {
-       console.log(changes);
+    //    console.log(changes);
     }
 
   render() {

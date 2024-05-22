@@ -174,6 +174,8 @@ import WatcherArray from "./utils/watcherArray.js";
         const subscription = component.on('doneProcessing', () => {
           tagNode._previousAttributesState = {...tagNode.attributes};
           tagNode._previousChildrenState = [...tagNode.children];
+          tagNode.assignedKeys = false;
+          tagNode.children.forEach(child => child.key = null)
         });
         tagNode.unsubscribeArr.push(subscription);
       }

@@ -18,6 +18,7 @@ class SmlBaseElement {
             ['unsubscribeArr', []],
             ['ref', null],
             ['key', null],
+            ['assignedKeys', false],
         ], {e: false, w: true})
         this.type = type;
         this.children = new WatcherArray(...children || []);
@@ -45,6 +46,15 @@ class SmlBaseElement {
         })
         const childrenChangeHandler = (data) => {
             console.log(data);
+            if (!this.assignedKeys) {
+                this.children.forEach((child, i) => {
+                    if (!child.key) {
+                        child.key = Math.random() * 10000 + i;
+                    }
+                })
+                this.assignedKeys = true;
+            }
+
             this.onElementChange('children');
         }
         const childrenUnsubscribe = this.children.on('change', childrenChangeHandler.bind(this));
@@ -57,7 +67,7 @@ class SmlBaseElement {
     }
 }
 
-export class SmlElement  extends SmlBaseElement {
+export class SmlElement extends SmlBaseElement {
 
 constructor (type, attributes = {}, children = [], parent) {
     super(type, attributes, children, parent);

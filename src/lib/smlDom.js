@@ -28,6 +28,7 @@ class SMLDOM {
     nodes.forEach((smlNode) => {
       if (smlNode.type === "textNode") {
         const textNode = document.createTextNode(smlNode.text);
+        smlNode.ref = textNode;
         mainFragment.appendChild(textNode);
         return;
       }

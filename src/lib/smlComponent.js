@@ -4,16 +4,6 @@ export default class SMLComponent extends BaseSmlComponent {
     super();
     this.onInit();
   }
-  _reRender() {
-    // console.log(this.changes);
-    // console.log('tree: ', this.tree);
-    // console.log('tree copy: ', this.treeState);
-    // this.objectUtil.compare(this.tree, this.treeState, { fullReport: true, log:true, types: true })
-    // console.log(this.tree === this.treeState);
-  }
-
-  
-
   onInit() {}
 
   afterViewInit() {}
