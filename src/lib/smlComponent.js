@@ -18,8 +18,6 @@ export default class SMLComponent extends BaseSmlComponent {
 
   afterViewInit() {}
 
-  
- 
   m(stringsArr, ...values) {
     const placeHolders = [];
     let htmlString = ``;

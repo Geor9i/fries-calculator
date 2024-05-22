@@ -8,7 +8,7 @@ class SmlBaseElement {
         if (!type) {
             throw new Error('SML Elements must have a type!')
         }
-        this.objectUtil = objectUtil;
+        Object.defineProperty(this, 'objectUtil', {enumerable: false, value: objectUtil});
         this.objectUtil.defineProperty(this, [
             ['_attributeChanges', new Set()],
             ['_childrenChanges', []],
@@ -97,6 +97,18 @@ setAttribute(key, value) {
 
 removeAttribute(key) {
     delete this.attributes[key];
+}
+
+appendChild(childNode, { index = -1 } = {}) {
+    if (index < 0) {
+        this.children.push(...childNode)
+    } else {
+        this.children.splice(index, 0, ...childNode)
+    }
+}
+
+prependChild(childNode) {
+        this.children.unshift(...childNode);
 }
 }
 

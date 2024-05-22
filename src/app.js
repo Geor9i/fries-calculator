@@ -18,9 +18,10 @@ class App extends SMLComponent {
 
     afterViewInit() {
         const element = this.tree[0];
-        element.children.push(2)
-        element.classList.add('blue');
-        element.children.push(1)
+        const div = this.m`<div></div>`;
+        element.prependChild(div);
+        console.log(element);
+        // console.log(div);
         // console.log(element);
     }
 
