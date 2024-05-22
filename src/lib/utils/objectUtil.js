@@ -63,6 +63,16 @@ export default class ObjectUtil {
     return split(arr, callback);
 }
 
+defineProperty(target, props = [], options = {}) {
+  const enumerable = options.e ?? true;
+  const writable = options.w ?? true;
+  const configurable = options.c ?? true;
+  props.forEach(prop => {
+    const [name, value] = prop;
+  Object.defineProperty(target, name, {enumerable , writable, configurable, value});
+  })
+}
+
 deepCopy(obj) {
   const refMap = new WeakMap();
   const copy = (obj) => {

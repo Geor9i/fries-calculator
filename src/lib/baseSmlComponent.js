@@ -7,12 +7,17 @@ export default class BaseSmlComponent {
     constructor() {
         // this.state = {};
         this.objectUtil = new ObjectUtil();
-        Object.defineProperty(this, 'root', {enumerable: false, writable: true, value: null});
-        Object.defineProperty(this, 'smlDom', {enumerable: false, writable: true, value: smlDom});
-        Object.defineProperty(this, 'sml', {enumerable: false, writable: true, value: sml});
-        Object.defineProperty(this, 'treeState', {enumerable: false, writable: true, value: []});
-        Object.defineProperty(this, 'smlLink', {enumerable: false, writable: true, value: smlLink});
-        Object.defineProperty(this, '_isProcessing', {enumerable: false, writable: true, value: true});
+        this.objectUtil.defineProperty(this, [
+        ['root', null],
+        ['treeState', []],
+        ['events', {}],
+        ['changes', []]
+        ['smlDom', smlDom],
+        ['sml', sml],
+        ['smlLink', smlLink],
+        ['_isProcessing', true],
+        ],
+         { e: false, w: true })
         Object.defineProperty(this, 'setRoot', {enumerable: false, value(rootElement) {
             if (rootElement instanceof HTMLElement) {
               this.root = rootElement;
@@ -33,13 +38,6 @@ export default class BaseSmlComponent {
           this.tree = this.renderMethod();
           this.treeState = this.objectUtil.deepCopy(this.tree);
         };
-        Object.defineProperty(this, 'changes', {
-          value: [],
-          writable: true,
-          enumerable:false,
-        })
-        
-
         Object.defineProperty(this, 'emit', {enumerable: false, value(eventName, data = null) {
             if (this.events.hasOwnProperty(eventName)) {
               this.events[eventName].forEach((subscription) => subscription.callback(data));
@@ -75,7 +73,8 @@ export default class BaseSmlComponent {
 
         render() {
             throw new Error("Render method must be defined!");
-          }
+        }
+
         useState(initialValue) {
         const key = `${new Date().getTime()}`;
         this.state[key] = initialValue;
