@@ -18,27 +18,8 @@ export default class BaseSmlComponent {
         ['_isProcessing', true],
         ],
          { e: false, w: true })
-        Object.defineProperty(this, 'setRoot', {enumerable: false, value(rootElement) {
-            if (rootElement instanceof HTMLElement) {
-              this.root = rootElement;
-            }
-          }});
-        Object.defineProperty(this, '_logChange', {enumerable: false, value(change) {
-              this.changes.push(change);
-              if (this._isProcessing) return;
-              this._isProcessing = true;
-              setTimeout(() => {
-                this.onChanges(this.changes);
-                this._reRender();
-                this._isProcessing = false;
-              }, 0)
-            }})
-        Object.defineProperty(this, 'renderMethod', { enumerable:  false, value: this.render });
-        this.render = () => {
-          this.tree = this.renderMethod();
-          this.treeState = this.objectUtil.deepCopy(this.tree);
-        };
-        Object.defineProperty(this, 'emit', {enumerable: false, value(eventName, data = null) {
+
+         Object.defineProperty(this, 'emit', {enumerable: false, value(eventName, data = null) {
             if (this.events.hasOwnProperty(eventName)) {
               this.events[eventName].forEach((subscription) => subscription.callback(data));
             }
@@ -55,6 +36,33 @@ export default class BaseSmlComponent {
               };
           }})
 
+        Object.defineProperty(this, 'setRoot', {enumerable: false, value(rootElement) {
+            if (rootElement instanceof HTMLElement) {
+              this.root = rootElement;
+            }
+          }});
+        Object.defineProperty(this, '_logChange', {enumerable: false, value(change) {
+              this.changes.push(change);
+              if (this._isProcessing) return;
+              this._isProcessing = true;
+              setTimeout(() => {
+                this.onChanges(this.changes);
+                this._reRender();
+                this._isProcessing = false;
+                this.emit('doneProcessing');
+              }, 0)
+              return this._isProcessing;
+            }})
+        Object.defineProperty(this, 'renderMethod', { enumerable:  false, writable: false, value: this.render });
+        this.render = () => {
+          this.tree = this.renderMethod();
+          this.treeState = this.objectUtil.deepCopy(this.tree);
+        };
+        Object.defineProperty(this, 'destroyMethod', { enumerable:  false, writable: false, value: this.onDestroy });
+        this.onDestroy = () => {
+        //TODO Component destroy logic
+          this.destroyMethod();
+        };
           Object.defineProperty(this, 'entry', {enumerable: false, value(rootElement) {
             this.setRoot(rootElement);
             this.render();
@@ -74,6 +82,8 @@ export default class BaseSmlComponent {
         render() {
             throw new Error("Render method must be defined!");
         }
+        onDestroy() {}
+
 
         useState(initialValue) {
         const key = `${new Date().getTime()}`;

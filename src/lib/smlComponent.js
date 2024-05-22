@@ -9,7 +9,7 @@ export default class SMLComponent extends BaseSmlComponent {
     console.log('tree: ', this.tree);
     console.log('tree copy: ', this.treeState);
     // this.objectUtil.compare(this.tree, this.treeState, { fullReport: true, log:true, types: true })
-    console.log(this.tree === this.treeState);
+    // console.log(this.tree === this.treeState);
   }
 
   _resetChanges() {
@@ -20,11 +20,8 @@ export default class SMLComponent extends BaseSmlComponent {
 
   afterViewInit() {}
 
-  onDestroy() {}
-
   onChanges() {
   }
-
  
   m(stringsArr, ...values) {
     const placeHolders = [];

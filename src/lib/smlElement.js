@@ -15,19 +15,27 @@ class SmlBaseElement {
             ['_previousAttributesState', { ...attributes } || {}],
             ['_previousChildrenState', [...children] || []],
             ['component', component],
+            ['unsubscribeArr', []],
+            ['ref', null]
         ], {e: false, w: true})
         this.type = type;
         this.children = new WatcherArray(...children || []);
         this.attributes = new WatcherObject(attributes || {});
 
+        Object.defineProperty(this, 'onElementRemove', {
+            value() {
+              this.unsubscribeArr.forEach(unsubscribe => unsubscribe());
+            },
+            enumerable: false,
+            writable: false,
+            configurable: false
+        })
         Object.defineProperty(this, 'onElementChange', {
             value(changePropKey) {
                 if (changePropKey === 'attributes') {
                     component._logChange({element: this, newState: {...this.attributes}, oldState: {...this._previousAttributesState}}) 
-                    this._previousAttributesState = { ...this.attributes };
                 } else if (changePropKey === 'children') {
                     component._logChange({element: this, newState: [...this.children], oldState: [...this._previousChildrenState]}) 
-                    this._previousChildrenState = [ ...this.children ];
                 }
             },
             enumerable: false,
@@ -35,20 +43,10 @@ class SmlBaseElement {
             configurable: false
         })
 
-        this.children.on('change', this.onElementChange.bind(this, 'children'));
-        this.attributes.on('propertyChange', this.onElementChange.bind(this, 'attributes'));
-        let _domLink = null;
-        Object.defineProperty(this, 'ref', {
-            get() {
-                return _domLink;
-            },
-            set(value) {
-                 _domLink = value;
-            },
-            enumerable: false
-        })
+        const childrenUnsubscribe = this.children.on('change', this.onElementChange.bind(this, 'children'));
+        const attributesUnsubscribe = this.attributes.on('propertyChange', this.onElementChange.bind(this, 'attributes'));
+        this.unsubscribeArr.push(childrenUnsubscribe, attributesUnsubscribe);
     }
-
 }
 
 export class SmlElement  extends SmlBaseElement {

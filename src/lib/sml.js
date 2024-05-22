@@ -156,6 +156,15 @@ import WatcherArray from "./utils/watcherArray.js";
       const isComponent = !this.validHTMLElements.includes(parent.open.name) && !isSmlTag;
       let tagNode = isComponent ? { type: parent.open.name, tree: [], attributes: {}, children: [] } :
       new SmlElement(parent.open.name, {}, [], options.parentComponent);
+      if (!isComponent) {
+        const component = options.parentComponent;
+        //? Reset attribute and children old state
+        const subscription = component.on('doneProcessing', () => {
+          tagNode._previousAttributesState = {...tagNode.attributes};
+          tagNode._previousChildrenState = [...tagNode.children];
+        });
+        tagNode.unsubscribeArr.push(subscription);
+      }
      
       const tagProps = placeHolders.filter(
         (entry) =>
