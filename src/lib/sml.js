@@ -157,7 +157,7 @@ import WatcherArray from "./utils/watcherArray.js";
         );
       prevTagEndIndex = parent.close.endIndex;
       if (preText.length && !/^\s+$/g.test(preText)) {
-        tagTree.push(preText);
+        tagTree.push({type: 'textNode', text: preText, key: null});
       }
       if (Object.keys(usedIndexes).length === sortedTagPairs.length) {
         postText = htmlString.slice(parent.close.endIndex);
@@ -215,7 +215,7 @@ import WatcherArray from "./utils/watcherArray.js";
           );
           sliceStartIndex = child.close.endIndex;
           if (text.length && !/^\s+$/g.test(text)) {
-            tagNode.children.push(text);
+            tagNode.children.push({type: 'textNode', text, key: null });
           }
           tagNode.children.push(...childNode);
           if (childrenCount === 1) {
@@ -224,7 +224,7 @@ import WatcherArray from "./utils/watcherArray.js";
               parent.close.startIndex
             );
             if (endText.length && !/^\s+$/g.test(endText)) {
-              tagNode.children.push(endText);
+              tagNode.children.push({type: 'textNode', text: endText, key: null});
             }
           }
           childrenCount = directChildren.filter(
@@ -238,7 +238,7 @@ import WatcherArray from "./utils/watcherArray.js";
             parent.close.startIndex
           );
           if (text.length && !/^\s+$/g.test(text)) {
-            tagNode.children.push(text);
+            tagNode.children.push({type: 'textNode', text, key: null });
           }
         }
       }
@@ -271,9 +271,8 @@ import WatcherArray from "./utils/watcherArray.js";
         tagTree.push(tagNode);
       }
 
-
       if (postText && postText.length && !/^\s+$/g.test(postText)) {
-        tagTree.push(postText);
+        tagTree.push({type: 'textNode', text: postText, key: null});
       }
 
       return tagTree;

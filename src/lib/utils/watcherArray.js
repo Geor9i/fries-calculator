@@ -8,7 +8,7 @@ export default class WatcherArray extends Array {
         const isArrayIndex = typeof index === 'number' && index >= 0;
         if (isArrayIndex && target[index] !== value) {
           const result = Reflect.set(target, prop, value, receiver);
-          this.emit('change', { method: 'set', index, value });
+          this.emit('change', { index, value });
           return result;
         }
         return Reflect.set(target, prop, value, receiver);
@@ -36,11 +36,6 @@ export default class WatcherArray extends Array {
 
   get(index) {
     return super[index];
-  }
-
-  set(index, value) {
-    super[index] = value;
-    return value;
   }
 
   delete(index) {

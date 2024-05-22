@@ -26,8 +26,8 @@ class SMLDOM {
       nodes = typeof componentTree === 'string' ? [componentTree] : componentTree;
     }
     nodes.forEach((smlNode) => {
-      if (typeof smlNode === "string") {
-        const textNode = document.createTextNode(smlNode);
+      if (smlNode.type === "textNode") {
+        const textNode = document.createTextNode(smlNode.text);
         mainFragment.appendChild(textNode);
         return;
       }

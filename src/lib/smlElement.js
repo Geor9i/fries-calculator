@@ -44,6 +44,7 @@ class SmlBaseElement {
             configurable: false
         })
         const childrenChangeHandler = (data) => {
+            console.log(data);
             this.onElementChange('children');
         }
         const childrenUnsubscribe = this.children.on('change', childrenChangeHandler.bind(this));
