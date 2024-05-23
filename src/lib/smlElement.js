@@ -92,6 +92,18 @@ constructor (type, attributes = {}, children = [], parent) {
                 }
             })
             attributesRef.class = classStringArr.join(' ');
+        },
+        toggle(...classNames) {
+            let classStringArr = (attributesRef?.class || '').split(' ');
+            classNames.forEach(className => {
+            const classIndex = classStringArr.findIndex(currentClassName => currentClassName === className);
+                if (classIndex !== -1) {
+                    classStringArr = classNames.slice(0, classIndex).concat(classNames.slice(classIndex + 1));
+                } else {
+                    classStringArr.push(className);
+                }
+            })
+            attributesRef.class = classStringArr.join(' ');
         }
     }
 

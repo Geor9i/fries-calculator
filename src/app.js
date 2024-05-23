@@ -20,11 +20,6 @@ class App extends SMLComponent {
         const element = this.tree[0];
         const div = this.m`<div></div>`;
         this.tree.push(...div);
-        console.log(element);
-        element.classList.remove('title')
-        element.classList.add('red')
-        // console.log(div);
-        // console.log(element);
     }
 
     onChanges(changes) {

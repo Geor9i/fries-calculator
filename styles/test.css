@@ -4,3 +4,10 @@
     border-radius: 13px;
     box-shadow: 2px 2px 5px;
 }
+
+.green {
+    background-color: rgb(0, 255, 42);
+    padding: 0.5em 1em;
+    border-radius: 13px;
+    box-shadow: 2px 2px 5px;
+}

@@ -1,6 +1,6 @@
 export default class WatcherArray extends Array {
-  constructor() {
-    super();
+  constructor(...items) {
+    super(...items);
     Object.defineProperty(this, 'events', {enumerable: false, value: {}});
     Object.defineProperty(this, 'method', {enumerable: false, writable: true, value: ''});
     return new Proxy(this, {

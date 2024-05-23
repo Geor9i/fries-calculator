@@ -214,6 +214,7 @@ let objCopy = copy(obj);
       const structureType = this.typeof(structure);
       if (structureType === 'array') {
         for (let node of structure) {
+          console.log(node);
           if(node?._attributeChanges && node._attributeChanges.size > 0) {
             const attributeChangesArr = Array.from(node._attributeChanges);
             const domElement = node.ref;

@@ -129,19 +129,7 @@ import WatcherArray from "./utils/watcherArray.js";
   }
 
   buildTree(sortedTagPairs, htmlString, placeHolders, options) {
-    const tagTree = new WatcherArray();
-    if (options?.parentComponent) {
-      const component = options.parentComponent;
-      const logChange = () => {
-        component._logChange({
-        message: 'Direct Component Tree Children Change',
-        newState: [...component.tree],
-        oldState: [...component.oldTreeState]
-      })
-      }
-      const unsubscribe = tagTree.on('change', logChange.bind(this));
-      component.unsubscribeArr.push(unsubscribe);
-    }
+    const tagTree = [];
     const usedIndexes = {};
     let prevTagEndIndex = 0;
     let buildTreePartial = (parent) => {
