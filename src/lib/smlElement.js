@@ -45,7 +45,6 @@ class SmlBaseElement {
             configurable: false
         })
         const childrenChangeHandler = (data) => {
-            console.log(data);
             if (!this.assignedKeys) {
                 this.children.forEach((child, i) => {
                     if (!child.key) {
@@ -54,7 +53,8 @@ class SmlBaseElement {
                 })
                 this.assignedKeys = true;
             }
-
+            const updatedChild = this.children[data.index];
+            updatedChild.key = updatedChild?.key ? updatedChild.key : Math.random() * 10000 + data.index;
             this.onElementChange('children');
         }
         const childrenUnsubscribe = this.children.on('change', childrenChangeHandler.bind(this));
@@ -87,7 +87,7 @@ constructor (type, attributes = {}, children = [], parent) {
             let classStringArr = (attributesRef?.class || '').split(' ');
             classNames.forEach(removeClassName => {
             const classIndex = classStringArr.findIndex(className => className === removeClassName);
-                if (classIndex) {
+                if (classIndex !== -1) {
                     classStringArr = classNames.slice(0, classIndex).concat(classNames.slice(classIndex + 1));
                 }
             })

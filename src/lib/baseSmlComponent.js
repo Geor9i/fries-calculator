@@ -50,7 +50,7 @@ export default class BaseSmlComponent {
               this._isProcessing = true;
               setTimeout(() => {
                 this.onChanges([...this.changes]);
-                this._reRender();
+                this.update();
                 this._isProcessing = false;
                 this.emit('doneProcessing');
               }, 0)
@@ -61,12 +61,8 @@ export default class BaseSmlComponent {
           this.tree = this.renderMethod();
           this.oldTreeState = this.objectUtil.deepCopy(this.tree);
         };
-        Object.defineProperty(this, '_reRender', { enumerable:  false, writable: false, value() {
-             console.log(this.tree);
-            // console.log('tree: ', this.tree);
-            // console.log('tree copy: ', this.treeState);
-            // this.objectUtil.compare(this.tree, this.treeState, { fullReport: true, log:true, types: true })
-            // console.log(this.tree === this.treeState);
+        Object.defineProperty(this, 'update', { enumerable:  false, writable: false, value() {
+             this.objectUtil.traverseAndUpdate(this.tree, this)
         } });
         Object.defineProperty(this, 'destroyMethod', { enumerable:  false, writable: false, value: this.onDestroy });
         this.onDestroy = () => {

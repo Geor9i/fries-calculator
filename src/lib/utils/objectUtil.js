@@ -207,6 +207,33 @@ let objCopy = copy(obj);
       return Object.prototype.toString.call(target).slice(8, -1).toLowerCase();
     }
   }
+  
+
+  traverseAndUpdate(smlTree, component){
+    const traverseTree = (structure, parent) => {
+      const structureType = this.typeof(structure);
+      if (structureType === 'array') {
+        for (let node of structure) {
+          if(node?._attributeChanges && node._attributeChanges.size > 0) {
+            const attributeChangesArr = Array.from(node._attributeChanges);
+            const domElement = node.ref;
+            attributeChangesArr.forEach(attribute => {
+              const updatedValue = node.attributes[attribute];
+              domElement.setAttribute(attribute, updatedValue)
+            })
+          }
+
+          if (node?.children) {
+            traverseTree(node.children, node)
+          }
+        }
+      } else if (structureType?.children){
+        traverseTree(structureType.children, parent)
+      }
+  }
+  traverseTree(smlTree, component)
+}
+
 
   compare(prop1, prop2, options) {
     let globalStructureMatch = true; 
