@@ -17,11 +17,13 @@ export default class WatcherObject {
         }
        
         Reflect.set(target, prop, value, receiver)
+          // TODO Implement Async logging for improved performance
         target.emit('propertyChange', { property: prop, value });
         return true;
       },
       deleteProperty: (target, prop) => {
         const result = Reflect.deleteProperty(target, prop);
+          // TODO Implement Async logging for improved performance
         target.emit('propertyChange', { property: prop, value: undefined });
         return result;
       }

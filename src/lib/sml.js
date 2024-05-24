@@ -5,14 +5,12 @@ import {
   validHTMLElements,
 } from "./constants/constants.js";
 import { SmlElement } from "./smlElement.js";
-import WatcherArray from "./utils/watcherArray.js";
  class SML {
   constructor() {
     this.selfClosingTags = selfClosingTags;
     this.validHTMLElements = validHTMLElements;
     this.smlTags = smlTags;
     this.regex = patterns;
-    this.components = [];
   }
 
   stringToTree({ htmlString, placeHolders, ...options }) {
@@ -155,18 +153,7 @@ import WatcherArray from "./utils/watcherArray.js";
       const tagName = parent.open.name;
       const isSmlTag = this.smlTags.includes(tagName);
       const isComponent = !this.validHTMLElements.includes(tagName) && !isSmlTag;
-      let tagNode = isComponent ? { type: tagName, children: [], attributes: {} } : new SmlElement(tagName, {}, [], options.parentComponent);
-      if (!isComponent) {
-        const component = options.parentComponent;
-        //? Reset attribute and children old state
-        const subscription = component.on('doneProcessing', () => {
-          tagNode._previousAttributesState = {...tagNode.attributes};
-          tagNode._previousChildrenState = [...tagNode.children];
-          tagNode.assignedKeys = false;
-          tagNode.children.forEach(child => child.key = null)
-        });
-        tagNode.unsubscribeArr.push(subscription);
-      }
+      let tagNode = isComponent ? { type: tagName, children: [], attributes: {} } : new SmlElement(tagName, {}, []);
      
       const tagProps = placeHolders.filter(
         (entry) =>
@@ -234,27 +221,25 @@ import WatcherArray from "./utils/watcherArray.js";
       }
 
       if (isComponent) {
-        const storedComponent = this.components.find(
+        const storedComponent = options?.components?.find(
           (entry) => entry.name === tagNode.type
         );
         if (!storedComponent) {
           throw new Error(`${tagNode.type} is not a known Component!`);
         }
-          const instance = new storedComponent.component();
-          instance.attributes = tagNode.attributes;
-          instance.children = tagNode.children;
+          const instance = new storedComponent();
+          instance.componentAttributes = tagNode.attributes;
+          instance.componentChildren = tagNode.children;
           instance.render();
-          instance._resetChanges();
-          instance._isProcessing = false;
+          // instance._isProcessing = false;
           instance.afterViewInit();
-          
           tagNode = { type: tagName, instance };
       }
 
       if (isSmlTag && options?.parentComponent) {
-          const { children } = options.parentComponent;
-          if (children && tagNode.type === 'sml-content') {
-            tagTree.push(...children);
+          const { componentChildren } = options.parentComponent;
+          if (componentChildren && tagNode.type === 'sml-content') {
+            tagTree.push(...componentChildren);
           }
 
       } else {

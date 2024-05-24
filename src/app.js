@@ -8,37 +8,33 @@ import ResultsDisplay from "./components/results.js";
 import DependencyHub from "./dependencyResolvers/dependencyHub.js";
 import SMLComponent from "./lib/smlComponent.js";
 import Input from "./components/Input.js";
-import Test from "./components/test.js";
  
 // const options = DependencyHub.provide(Options);
 // const friesCalculator = DependencyHub.provide(FriesCalculator);
 // const resultsDisplay = DependencyHub.provide(ResultsDisplay);
 
-class App extends SMLComponent {
-
+export default class App extends SMLComponent {
+    constructor() {
+        super();
+        this.components = [Input];
+    }
     afterViewInit() {
-        const element = this.tree[0];
-        const div = this.m`<div></div>`;
-        this.tree.push(...div);
+       
     }
 
     onChanges(changes) {
-    //    console.log(changes);
     }
 
   render() {
-    const text = 'This is some text';
-    const getClass = () => 'red';
-
     return this.m`
-    <h1 class="title">Fries calculator</h1>
+    <div class="title">Fries calculator</div>
+    <Input>
+    <p>This is sml-content</p>
+    </Input>
     `;
   }
 }
 
-const app = new App();
-app.loadComponents(Input, Test);
-app.entry(document.querySelector('.root'));
 
 /**
  * <!-- 

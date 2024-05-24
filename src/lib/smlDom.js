@@ -1,4 +1,3 @@
-import { objectUtil } from "./utils/objectUtil.js";
 import {
   selfClosingTags,
 } from "./constants/constants.js";
@@ -8,23 +7,12 @@ class SMLDOM {
   constructor() {
     this.selfClosingTags = selfClosingTags;
     this.components = null;
-    this.objectUtil = objectUtil;
   }
 
 
-  buildDom(elementParent, componentTree) {
+  buildDom(children, parentComponent) {
     const mainFragment = document.createDocumentFragment();
-    let nodes = [];
-    const treeType = this.objectUtil.typeof(componentTree);
-    const { instance } = componentTree;
-    if (treeType === 'object' && instance.hasOwnProperty('tree')) {
-      console.log(instance);
-      nodes = instance.tree;
-    } else if (treeType === 'object') {
-      nodes = componentTree.children;
-    } else {
-      nodes = typeof componentTree === 'string' ? [componentTree] : componentTree;
-    }
+    let nodes = typeof children === 'string' ? [children] : children;
     nodes.forEach((smlNode) => {
       if (smlNode.type === "textNode") {
         const textNode = document.createTextNode(smlNode.text);
@@ -33,9 +21,9 @@ class SMLDOM {
         return;
       }
       const { children, attributes, instance } = smlNode;
-      if (instance?.hasOwnProperty('tree')) { //? If Component
+      if (instance?.hasOwnProperty('componentChildren')) { //? If Component
         let componentFragment = document.createDocumentFragment();
-        this.buildDom(componentFragment, instance.tree);
+        this.buildDom(instance.children, componentFragment);
         mainFragment.appendChild(componentFragment);
         return;
       }
@@ -50,13 +38,51 @@ class SMLDOM {
         }
       }
       if (!this.selfClosingTags.includes(tagName) && children.length) {
-        this.buildDom(element, children);
+        this.buildDom(children, element);
       }
       mainFragment.appendChild(element);
     });
-    elementParent.appendChild(mainFragment);
+    parentComponent.appendChild(mainFragment);
   }
 
+  traverseAndUpdate(component){
+
+    const tree = component.tree;
+    console.log(component);
+    const directChildrenChanges = component._treeChanges
+
+    const traverseTree = (parent) => {
+      const isComponent = parent.hasOwnProperty('tree');
+      if (isComponent) return;
+      console.log(isComponent);
+      const structureType = this.typeof(structure);
+      if (structureType === 'array') {
+        for (let node of structure) {
+          console.log(node);
+
+          if (node?._childrenChanges) {
+            console.log(node._childrenChanges);
+          }
+
+          if(node?._attributeChanges && node._attributeChanges.size > 0) {
+            const attributeChangesArr = Array.from(node._attributeChanges);
+            const domElement = node.ref;
+            attributeChangesArr.forEach(attribute => {
+              const updatedValue = node.attributes[attribute];
+              domElement.setAttribute(attribute, updatedValue)
+            })
+          }
+
+          if (node?.children) {
+            traverseTree(node.children, node)
+          }
+        }
+      } else if (structureType?.children){
+        traverseTree(structureType.children, parent)
+      }
+  }
+  traverseTree(component)
+}
 }
 
 export const smlDom = new SMLDOM();

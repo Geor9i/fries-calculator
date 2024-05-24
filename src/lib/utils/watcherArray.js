@@ -9,6 +9,7 @@ export default class WatcherArray extends Array {
         const isArrayIndex = typeof index === 'number' && index >= 0;
         if (isArrayIndex && target[index] !== value) {
           const result = Reflect.set(target, prop, value, receiver);
+          // TODO Implement Async logging for improved performance
           this.emit('change', { index, value, method: this.method || 'set' });
           this.method = '';
           return result;

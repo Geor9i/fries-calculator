@@ -209,12 +209,25 @@ let objCopy = copy(obj);
   }
   
 
-  traverseAndUpdate(smlTree, component){
-    const traverseTree = (structure, parent) => {
+  traverseAndUpdate(component){
+
+    const tree = component.tree;
+    console.log(component);
+    const directChildrenChanges = component._treeChanges
+
+    const traverseTree = (parent) => {
+      const isComponent = parent.hasOwnProperty('tree');
+      if (isComponent) return;
+      console.log(isComponent);
       const structureType = this.typeof(structure);
       if (structureType === 'array') {
         for (let node of structure) {
           console.log(node);
+
+          if (node?._childrenChanges) {
+            console.log(node._childrenChanges);
+          }
+
           if(node?._attributeChanges && node._attributeChanges.size > 0) {
             const attributeChangesArr = Array.from(node._attributeChanges);
             const domElement = node.ref;
@@ -232,7 +245,7 @@ let objCopy = copy(obj);
         traverseTree(structureType.children, parent)
       }
   }
-  traverseTree(smlTree, component)
+  traverseTree(component)
 }
 
 
