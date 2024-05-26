@@ -4,6 +4,9 @@ export default class WatcherArray extends Array {
     Object.defineProperty(this, 'events', {enumerable: false, value: {}});
     Object.defineProperty(this, 'method', {enumerable: false, writable: true, value: ''});
     return new Proxy(this, {
+      get(target, name, receiver) {
+        console.log({target, name, receiver});
+      },
       set: (target, prop, value, receiver) => {
         const index = isNaN(Number(prop)) ? prop : Number(prop);
         const isArrayIndex = typeof index === 'number' && index >= 0;

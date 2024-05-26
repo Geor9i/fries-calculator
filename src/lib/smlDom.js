@@ -9,7 +9,6 @@ class SMLDOM {
     this.components = null;
   }
 
-
   buildDom(children, parentComponent) {
     const mainFragment = document.createDocumentFragment();
     let nodes = typeof children === 'string' ? [children] : children;

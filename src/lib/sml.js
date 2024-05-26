@@ -126,6 +126,10 @@ import { SmlElement } from "./smlElement.js";
     }
   }
 
+  resolvePlaceholders(placeHolder) {
+
+  }
+
   buildTree(sortedTagPairs, htmlString, placeHolders, options) {
     const tagTree = [];
     const usedIndexes = {};
@@ -154,7 +158,6 @@ import { SmlElement } from "./smlElement.js";
       const isSmlTag = this.smlTags.includes(tagName);
       const isComponent = !this.validHTMLElements.includes(tagName) && !isSmlTag;
       let tagNode = isComponent ? { type: tagName, children: [], attributes: {} } : new SmlElement(tagName, {}, []);
-     
       const tagProps = placeHolders.filter(
         (entry) =>
           parent.open.startIndex <= entry.index &&
@@ -231,8 +234,6 @@ import { SmlElement } from "./smlElement.js";
           instance.componentAttributes = tagNode.attributes;
           instance.componentChildren = tagNode.children;
           instance.render();
-          // instance._isProcessing = false;
-          instance.afterViewInit();
           tagNode = { type: tagName, instance };
       }
 

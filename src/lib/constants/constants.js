@@ -7,7 +7,9 @@ export const patterns = {
     closingTag: /<\/(?<tagName>[-\w]+)\s*>/,
     selfClosingTag: /<(?<tagName>[-\w]+)[^<>]*[\/]>/,
     commentTag: /<!--.+?-->/g,
-    attribute: /\s+(?<attribute>[-@%&$£*#a-z]+)(?:\s*="(?<value>[^"]*)")?/g
+    attribute: /\s+(?<attribute>[-@%&$£*#a-z]+)(?:\s*="(?<value>[^"]*)")?/g,
+    smlFor: /@for\s*\(\s*(?<variableType>const|let)\s+(?<variableName>[A-Za-z0-9]+)\s+of\s+(?<propName>[A-Za-z0-9]+)\s*\)\s*\{(?<template>[\s\S]*?)\}/g,
+    smlIf: /@if\s*\((?<expression>[\s\S]*)\)\s*\{(?<template>[\s\S]*?)\}/g,
   }
   export const selfClosingTags = [
       "area",

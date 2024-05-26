@@ -8,6 +8,8 @@ import ResultsDisplay from "./components/results.js";
 import DependencyHub from "./dependencyResolvers/dependencyHub.js";
 import SMLComponent from "./lib/smlComponent.js";
 import Input from "./components/Input.js";
+import Mutable, { getRef } from "./lib/mutable.js";
+import SmlExpresions from "./lib/smlExpressions.js";
  
 // const options = DependencyHub.provide(Options);
 // const friesCalculator = DependencyHub.provide(FriesCalculator);
@@ -16,22 +18,31 @@ import Input from "./components/Input.js";
 export default class App extends SMLComponent {
     constructor() {
         super();
-        this.components = [Input];
+    this.components = [Input];
+    this.state = new Mutable([1,2,3,4]);
+    let hold = this.state.map(el => `<li>${el}</li>`);
     }
     afterViewInit() {
-       
+        const expressionEvaluator = new SmlExpresions();
+       const expression = '10 < true';
+       expressionEvaluator.parse(expression);
     }
 
-    onChanges(changes) {
-    }
 
   render() {
+    const id = () => 'myDiv';
+    const disabled = () => 'disabled';
+
+    // const arr = [1,2,3,4]
+    // <div class="title" id=${id} >Fries calculator</div>
     return this.m`
-    <div class="title">Fries calculator</div>
-    <Input>
-    <p>This is sml-content</p>
-    </Input>
+    <div></div>
+    @for (const item of items) {
+        <div>Hello World  </div>
+    }
+   
     `;
+    // ${arr.map(num => `<li>${num}</li>`)}
   }
 }
 

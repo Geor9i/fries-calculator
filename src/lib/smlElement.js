@@ -1,22 +1,16 @@
-class SmlBaseElement {
 
-    constructor(type, attributes = {}, children = []) {
-        if (!type) {
-            throw new Error('SML Elements must have a type!')
-        }
-        this.type = type;
-        this.children = children || [];
-        this.attributes = attributes || {};
-        this.key = null;
-        this.ref = null;
-    }
-}
-
-export class SmlElement extends SmlBaseElement {
+export class SmlElement {
 
 constructor (type, attributes = {}, children = [], parent) {
-    super(type, attributes, children, parent);
-
+    if (!type) {
+        throw new Error('SML Elements must have a type!')
+    }
+    this.type = type;
+    this.children = children || [];
+    this.attributes = attributes || {};
+    this.key = null;
+    this.ref = null;
+    
     this.classList = {
         add(...classNames) {
             const classStringArr = (attributes?.class || '').split(' ');

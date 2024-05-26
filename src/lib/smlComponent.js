@@ -2,12 +2,13 @@ import { objectUtil } from "./utils/objectUtil.js";
 import { sml } from "./sml.js";
 import { smlDom } from "./smlDom.js";
 import { smlLink } from "./smlLink.js"
+import { smlInterpreter } from "./smlInterpreter.js";
 
 export default class SMLComponent  {
   constructor() {
     this.components = [];
     this.attributes = {};
-    this.children = [];
+    this.children = null;
     objectUtil.defineProperty(this, [
     ['componentAttributes', {}],
     ['componentChildren', []],
@@ -91,7 +92,8 @@ export default class SMLComponent  {
     Object.defineProperty(this, 'setParent', { enumerable:  false, writable: false, value: (parent) => this.parent = parent });
      Object.defineProperty(this, 'renderMethod', { enumerable: false, writable: false, value: this.render });
      this.render = () => {
-       this.children = [...this.renderMethod()];
+       this.children = this.children === null ? [...this.renderMethod()] : this.children;
+       this.afterViewInit();
      };
 
      Object.defineProperty(this, 'update', { enumerable:  false, writable: false, value() {
@@ -109,7 +111,8 @@ export default class SMLComponent  {
   }
   onInit() {}
 
-  afterViewInit() {}
+  afterViewInit() {
+  }
 
   m(stringsArr, ...values) {
     const placeHolders = [];

@@ -22,7 +22,7 @@ class smlBootLoader {
         const app = new entryComponent();
         app.setParent(rootElement);
         app.render();
-        console.log(app.children);
+        // console.log(app.children);
         smlDom.buildDom(app.children, this.root);
     }
 }
