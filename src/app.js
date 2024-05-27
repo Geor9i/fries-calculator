@@ -24,7 +24,7 @@ export default class App extends SMLComponent {
     }
     afterViewInit() {
         const expressionEvaluator = new SmlExpresions();
-       const expression = '((2 + 5))';
+       const expression = '((2 + 5 box?.red))';
        expressionEvaluator.evaluate(expression);
     }
 
