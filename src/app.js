@@ -24,8 +24,8 @@ export default class App extends SMLComponent {
     }
     afterViewInit() {
         const expressionEvaluator = new SmlExpresions();
-       const expression = '10 < true';
-       expressionEvaluator.parse(expression);
+       const expression = '((2 + 5))';
+       expressionEvaluator.evaluate(expression);
     }
 
 
